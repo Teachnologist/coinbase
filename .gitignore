@@ -3,3 +3,4 @@ coinbase-app1.iml
 src/test/
 target/
 lib/
+/src/main/resources/application.properties

@@ -48,7 +48,7 @@ public class RouterController {
             CODE = code;
         }
 
-        /*for testing*/
+        /*for testing - use CODE whn working in an ssl environment*/
         String fakecode = "";
         model.addAttribute("user",useBearer(fakecode,"/user"));
         return "coinbase";
