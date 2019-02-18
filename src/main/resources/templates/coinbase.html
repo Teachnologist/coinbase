@@ -5,8 +5,36 @@
 </head>
 <body>
 <h3>User Details</h3>
-<div th:text="${user}">
+<div th:insert="fragments/public/links :: links(${links})"></div>
 
+<div style="width:100%;background-color:navy;color:white;">
+    <table border="1">
+        <tr>
+            <td><p th:text="Iteration"></p></td>
+            <td><p th:text="${iteration}"></p></td>
+        </tr>
+        <tr>
+            <td><p th:text="Amount"></p></td>
+            <td><p th:text="${amount}"></p></td>
+        </tr>
+        <tr>
+            <td><p th:text="Currency"></p></td>
+            <td><p th:text="${currency}"></p></td>
+        </tr>
+        <tr>
+            <td><p th:text="Base"></p></td>
+            <td><p th:text="${base}"></p></td>
+        </tr>
+    </table>
+</div>
+
+<div style="width:100%;background-color:black;color:white;">
+   <table border="1">
+    <tr th:each="list: ${lists}">
+        <td><p th:text="${list.id}"></p></td>
+        <td><p th:text="${list.name}"></p></td>
+    </tr>
+   </table>
 </div>
 </body>
 </html>

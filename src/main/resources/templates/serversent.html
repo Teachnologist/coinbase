@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1 id="testele">USD PER BITCOIN</h1>
+<table border="1">
+    <thead>
+    <th>Current Price</th>
+    <th>Last Price</th>
+    <th>Change</th>
+    </thead>
+    <tbody>
+    <td><p id="current"></p></td>
+    <td><p id="last"></p></td>
+    <td><p id="change"></p></td>
+
+
+
+    </tbody>
+    <th>
+
+    </th>
+
+</table>
+
+
+
+</body>
+<script>
+    if (!!window.EventSource) {
+        console.log("Event source available");
+        var source = new EventSource('/server/serversent/includeit');
+
+
+        source.addEventListener('message', function(e) {
+            console.log(e.data);
+
+            var current = document.getElementById("current");
+            var last = document.getElementById("last");
+            var change = document.getElementById("change");
+            var obj = JSON.parse(e.data);
+            current.innerText = obj.current;
+            last.innerText = obj.last;
+            change.innerText = obj.change;
+
+            if(current.innerText != last.innerText){
+                change.style.color = "red";
+            }else{
+                change.style.color = "green";
+            }
+
+            console.log("AMOUNT "+obj.current);
+
+        });
+
+        source.addEventListener('open', function(e) {
+            console.log("Connection was opened.");
+        }, false);
+
+        source.addEventListener('error', function(e) {
+            if (e.readyState == EventSource.CLOSED) {
+                console.log("Connection was closed.");
+            } else {
+                console.log(e.readyState);
+            }
+        }, false);
+    } else {
+        console.log("No SSE available");
+    }
+
+</script>
+</html>

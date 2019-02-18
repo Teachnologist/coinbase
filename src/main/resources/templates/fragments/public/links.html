@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<div th:fragment="links (linkArray)">
+    <tr th:each="link: ${linkArray}">
+        <td><a th:href="|/${link}|" th:text="${link}">}</a></td>
+    </tr>
+</div>
+</body>
+</html>
