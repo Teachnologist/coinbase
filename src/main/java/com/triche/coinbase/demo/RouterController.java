@@ -1,17 +1,14 @@
 package com.triche.coinbase.demo;
 
+import com.triche.coinbase.coinbaseProproducts;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestTemplate;
 import triche.coinbase.curl.publicAPI;
 import triche.coinbase.curl.readAPI;
 
@@ -33,6 +30,9 @@ public class RouterController {
     @Value("${coinbase.api.URL}")
     String URL;
 
+    @Value("${coinbase.api.PROURL}")
+    String PROURL;
+
     @Value("${coinbase.api.DEV_KEY}")
     String DEV_KEY;
 
@@ -41,13 +41,57 @@ public class RouterController {
 
     String CODE = null;
 
-
     @RequestMapping(value = "/")
-    public String index(Model model) {
-        System.out.println("\n....................................This should show....................................\n");
+    public String index(Model model, @PathVariable(value = "currency", required=false) String currency) {
+        System.out.println("\n....................................This should show 2....................................\n");
+
+        String dollar_type = "USD";
+        if(currency != null){
+            /*compare to part of an enum in app props*/
+            dollar_type = currency;
+        }
+
+        coinbaseProproducts cbpropublic = new coinbaseProproducts(PROURL,dollar_type);
+        cbpropublic.setProductList();
+
+
+        /*TODO make login button with this attribute*/
         String url = "https://www.coinbase.com/oauth/authorize?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URL + "&response_type=code&scope=" + SCOPE;
         model.addAttribute("link", url);
+        List data = cbpropublic.getAllProductsLevelOne();
+        System.out.print(data);
+        model.addAttribute("data",data);
         return "home";
+    }
+
+
+    @RequestMapping(value = "/{currency}")
+    public String indexwithPath(Model model, @PathVariable(value = "currency", required=false) String currency) {
+        System.out.println("\n....................................This should show....................................\n");
+
+        String dollar_type = "USD";
+        if(currency != null){
+            /*compare to part of an enum in app props*/
+            dollar_type = currency;
+        }
+
+        coinbaseProproducts cbpropublic = new coinbaseProproducts(PROURL,dollar_type);
+        cbpropublic.setProductList();
+
+
+        /*TODO make login button with this attribute*/
+        String url = "https://www.coinbase.com/oauth/authorize?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URL + "&response_type=code&scope=" + SCOPE;
+        model.addAttribute("link", url);
+        List data = cbpropublic.getAllProductsLevelOne();
+        System.out.print(data);
+        model.addAttribute("data",data);
+        return "home";
+    }
+
+    @RequestMapping(value = "/orders/{pairs}")
+    public void orderPairs(Model model, @PathVariable(value = "pairs", required=false) String pairs) {
+        System.out.println("\n....................................This should show....................................\n");
+System.out.println("GOT IT!: "+pairs);
     }
 
     @RequestMapping(value = "/server")
@@ -75,7 +119,7 @@ public class RouterController {
         publicAPI publicread = new publicAPI(URL,"/prices/BTC-USD/buy");
 
         //returns entire object
-        JSONObject currencies = publicread.getcallAPI();
+        JSONObject currencies = publicread.getcallAPIObject();
 
         //returns an array of the data object - th
         //could this be directly mapped to thymeleaf? - no, cannot find those properties so has to be mutated
@@ -90,7 +134,8 @@ public class RouterController {
             Integer count = 0;
             Integer seconds = 3;
             Integer milliseconds = seconds*1000;
-            try {
+         /*   try {
+>>>>>>> ee3bce2e24403752220f3d4267ded5f7f67c3da9
                 while (count < 30) {
                     publicread = new publicAPI(URL,"/prices/BTC-USD/buy");
 
@@ -107,7 +152,7 @@ public class RouterController {
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
 
         }else {
 
@@ -148,6 +193,24 @@ public class RouterController {
         readAPI read = new readAPI(URL,CODE,"/user");
         model.addAttribute("data",read.getcallAPI());
         return "coinbase/user";
+    }
+
+    @RequestMapping(value = "/coinbase/accounts")
+    public String coinbaseAccounts(Model model){
+        readAPI read = new readAPI(URL,CODE,"/accounts");
+        JSONObject api = read.getcallAPI();
+
+        JSONArray array = api.getJSONArray("data");
+
+        List<Map> listofobjects = new ArrayList<Map>();
+
+
+        for (int i = 0; i < array.length(); i++) {
+            System.out.println(array.get(i).toString());
+
+        }
+        model.addAttribute("data",read.getcallAPI());
+        return "coinbase/accounts";
     }
 
  /* TODO: Address gdax strategy*/

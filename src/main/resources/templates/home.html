@@ -5,9 +5,34 @@
     <title>Home</title>
 </head>
 <body>
-Hello World
-<a href="/login">Login</a>
-<a th:href="${link}">Test</a>
+<a th:href="${link}">Sign in to coinbase</a>
+
+<div th:text="${data}"></div>
+
+<table>
+    <thead>
+    <th>Sequence</th>
+    <th>Pairs</th>
+    <th>Bid</th>
+    <th>Ask</th>
+    <th>Spread</th>
+    </thead>
+    <tbody>
+
+    <tr th:each="list:${data}">
+        <td th:text="${list.sequence}"><</td>
+        <td><a th:href="|/orders/${list.pair}|" th:text="${list.pair}"></a></td>
+        <td th:text="${list.bid_price}"></td>
+        <td th:text="${list.ask_price}"></td>
+        <td th:text="${list.spread}"></td>
+
+    </tr>
+
+    </tbody>
+
+</table>
+
+
 
 
 </body>
