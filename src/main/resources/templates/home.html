@@ -1,39 +1,84 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
+<head th:replace="fragments/heading :: heading">
+
+
 </head>
 <body>
 <a th:href="${link}">Sign in to coinbase</a>
 
-<div th:text="${data}"></div>
+<main class="mdl-layout__content">
+    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+        <thead>
+        <tr>
+            <th>Pairs</th>
+            <th>Bid</th>
+            <th>Ask</th>
+            <th>Spread</th>
+            <th>Min Value</th>
+            <th>Max Value</th>
+        </tr>
+        </thead>
+        <tbody id="dataTable">
+        <tr th:each="list:${data}">
+            <td><a th:href="|/orders/${list.pair}|" th:text="${list.pair}"></a></td>
+            <td th:text="${list.bid_price}"></td>
+            <td th:text="${list.ask_price}"></td>
+            <td th:text="${list.spread}"></td>
+            <td th:text="${list.min_quote}"></td>
+            <td th:text="${list.max_quote}"></td>
 
-<table>
-    <thead>
-    <th>Sequence</th>
-    <th>Pairs</th>
-    <th>Bid</th>
-    <th>Ask</th>
-    <th>Spread</th>
-    </thead>
-    <tbody>
+        </tr>
 
-    <tr th:each="list:${data}">
-        <td th:text="${list.sequence}"><</td>
-        <td><a th:href="|/orders/${list.pair}|" th:text="${list.pair}"></a></td>
-        <td th:text="${list.bid_price}"></td>
-        <td th:text="${list.ask_price}"></td>
-        <td th:text="${list.spread}"></td>
+        </tbody>
+    </table>
 
-    </tr>
-
-    </tbody>
-
-</table>
-
-
-
-
+</main>
 </body>
+<script>
+if (!!window.EventSource) {
+console.log("Event source available");
+
+var source = new EventSource('/pro/products/level1');
+
+source.addEventListener('message', function(e) {
+console.log(e.data);
+
+});
+
+source.addEventListener('open', function(e) {
+console.log("Connection was opened.");
+}, false);
+
+source.addEventListener('error', function(e) {
+if (e.readyState == EventSource.CLOSED) {
+console.log("Connection was closed.");
+} else {
+console.log(e.readyState);
+}
+}, false);
+} else {
+console.log("No SSE available");
+}
+
+function createTableData(data){
+    var html = "";
+  /*  for(var i=0;i<data.length;i++){
+
+    <tr>
+            <td><a href="/orders/"+data[i]. ></a></td>
+        <td th:text="${list.bid_price}"></td>
+            <td th:text="${list.ask_price}"></td>
+            <td th:text="${list.spread}"></td>
+            <td th:text="${list.min_quote}"></td>
+            <td th:text="${list.max_quote}"></td>
+
+            </tr>
+
+
+
+    }*/
+}
+
+</script>
 </html>

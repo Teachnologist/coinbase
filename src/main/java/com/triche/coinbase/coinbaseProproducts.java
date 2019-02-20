@@ -11,13 +11,25 @@ import java.util.Map;
 
 public class coinbaseProproducts {
 
-    private String URI = "";
-    private String CURRENCY = "";
-    private List<Map<String,String>> PRODUCTS;
+    private static String URI = "";
+    private static String CURRENCY = "";
+    private static List<Map<String,String>> PRODUCTS;
 
     public coinbaseProproducts(String URL, String currency){
         URI = URL;
         CURRENCY = currency;
+    }
+
+    public coinbaseProproducts(){
+
+    }
+
+    public void setCurrency(String currency){
+        CURRENCY = currency;
+    }
+
+    public String getCurrency(){
+        return CURRENCY;
     }
 
     public void setProductList(){
@@ -50,15 +62,25 @@ public class coinbaseProproducts {
         PRODUCTS = listofobjects;
     }
 
-    public List<Map<String,String>> getProductlist(){
+    public static List<Map<String,String>> getProductlist(){
         return PRODUCTS;
     }
 
-    public List<Map<String,String>> getAllProductsLevelOne(){
+    public static String getCURRENCY() {
+        return CURRENCY;
+    }
+
+    public static String getURI() {
+        return URI;
+    }
+
+    public static List<Map<String,String>> getAllProductsLevelOne(){
         List<Map<String,String>> listofobjects = new ArrayList<Map<String,String>>();
 
           for(int i=0; i<PRODUCTS.size();i++) {
               String pair = PRODUCTS.get(i).get("pair");
+              String min_quote = PRODUCTS.get(i).get("min_quote");
+              String max_quote = PRODUCTS.get(i).get("max_quote");
               /*must contain USD; allow user to set preference*/
               if (pair.contains(CURRENCY) && !pair.contains("USDC")) {
                   publicAPI publicread = new publicAPI(URI, "/products/" + pair + "/book");
@@ -91,7 +113,8 @@ public class coinbaseProproducts {
                       stringobject.put("bid_price", bid_price);
                       stringobject.put("ask_price", ask_price);
                       stringobject.put("spread", spread.toString());
-                      stringobject.put("sequence", sequence.toString());
+                      stringobject.put("min_quote", min_quote);
+                        stringobject.put("max_quote", min_quote);
                       System.out.println("map 1");
                       System.out.print(stringobject);
                       System.out.println("map 2");

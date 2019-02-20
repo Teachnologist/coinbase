@@ -52,6 +52,7 @@ public class RouterController {
         }
 
         coinbaseProproducts cbpropublic = new coinbaseProproducts(PROURL,dollar_type);
+        cbpropublic.setCurrency(dollar_type);
         cbpropublic.setProductList();
 
 
