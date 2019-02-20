@@ -1,6 +1,7 @@
 package com.triche.coinbase.demo;
 
 import com.triche.coinbase.coinbaseProproducts;
+import com.triche.coinbase.coinbaseVariables;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,8 +52,10 @@ public class RouterController {
             dollar_type = currency;
         }
 
-        coinbaseProproducts cbpropublic = new coinbaseProproducts(PROURL,dollar_type);
-        cbpropublic.setCurrency(dollar_type);
+        coinbaseVariables.setCURRENCY(dollar_type);
+        coinbaseVariables.setURI(PROURL);
+
+        coinbaseProproducts cbpropublic = new coinbaseProproducts();
         cbpropublic.setProductList();
 
 
@@ -75,8 +78,10 @@ public class RouterController {
             /*compare to part of an enum in app props*/
             dollar_type = currency;
         }
+        coinbaseVariables.setCURRENCY(dollar_type);
+        coinbaseVariables.setURI(PROURL);
 
-        coinbaseProproducts cbpropublic = new coinbaseProproducts(PROURL,dollar_type);
+        coinbaseProproducts cbpropublic = new coinbaseProproducts();
         cbpropublic.setProductList();
 
 

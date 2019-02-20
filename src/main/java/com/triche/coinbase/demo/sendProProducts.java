@@ -1,6 +1,7 @@
 package com.triche.coinbase.demo;
 
 import com.triche.coinbase.coinbaseProproducts;
+import com.triche.coinbase.coinbaseVariables;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -19,10 +20,6 @@ import java.util.Map;
 @RequestMapping("/pro/")
 public class sendProProducts {
 
-
-
-
-
     @RequestMapping("/products/level1")
     public @ResponseBody String sendMessage(HttpServletResponse response) {
         response.setContentType("text/event-stream");
@@ -32,11 +29,14 @@ public class sendProProducts {
             System.out.println(e);
         }
 
-        List PRODUCTS = getAllProductsLevelOne();
+        coinbaseProproducts pro = new coinbaseProproducts();
 
-        System.out.print(PRODUCTS);
+        List data = pro.getAllProductsLevelOne();
 
-        JSONObject returned = new JSONObject(PRODUCTS);
+
+        System.out.print( new JSONArray(data));
+
+        JSONArray returned = new JSONArray(data);
 
         return "data: "+returned+"\n\n";
 
@@ -44,9 +44,9 @@ public class sendProProducts {
     }
 
     public List<Map<String,String>> getAllProductsLevelOne(){
-        String CURRENCY = coinbaseProproducts.getCURRENCY();
-        List<Map<String,String>> PRODUCTS = coinbaseProproducts.getProductlist();
-        String URI = coinbaseProproducts.getURI();
+        String CURRENCY = coinbaseVariables.getCURRENCY();
+        List<Map<String,String>> PRODUCTS = coinbaseVariables.getPRODUCTS();
+        String URI = coinbaseVariables.getURI();
         System.out.println("CURRENCY: "+CURRENCY);
 
         System.out.println("URI: "+URI);

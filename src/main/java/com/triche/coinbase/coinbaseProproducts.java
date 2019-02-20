@@ -11,28 +11,9 @@ import java.util.Map;
 
 public class coinbaseProproducts {
 
-    private static String URI = "";
-    private static String CURRENCY = "";
-    private static List<Map<String,String>> PRODUCTS;
-
-    public coinbaseProproducts(String URL, String currency){
-        URI = URL;
-        CURRENCY = currency;
-    }
-
-    public coinbaseProproducts(){
-
-    }
-
-    public void setCurrency(String currency){
-        CURRENCY = currency;
-    }
-
-    public String getCurrency(){
-        return CURRENCY;
-    }
-
     public void setProductList(){
+        String URI = coinbaseVariables.getURI();
+        String CURRENCY = coinbaseVariables.getCURRENCY();
         List<Map<String,String>> listofobjects = new ArrayList<Map<String,String>>();
         //set endpoint
         publicAPI publicread = new publicAPI(URI,"/products");
@@ -59,22 +40,17 @@ public class coinbaseProproducts {
             }
 
         }
-        PRODUCTS = listofobjects;
+        coinbaseVariables.setPRODUCTS(listofobjects);
     }
 
-    public static List<Map<String,String>> getProductlist(){
-        return PRODUCTS;
-    }
 
-    public static String getCURRENCY() {
-        return CURRENCY;
-    }
-
-    public static String getURI() {
-        return URI;
-    }
-
-    public static List<Map<String,String>> getAllProductsLevelOne(){
+    public List<Map<String,String>> getAllProductsLevelOne(){
+        String URI = coinbaseVariables.getURI();
+        String CURRENCY = coinbaseVariables.getCURRENCY();
+        System.out.print("DOLLAR type: "+CURRENCY+"\n");
+        System.out.print("DOLLAR URI: "+URI+"\n");
+        List<Map<String,String>> PRODUCTS = coinbaseVariables.getPRODUCTS();
+        System.out.print(PRODUCTS.toString());
         List<Map<String,String>> listofobjects = new ArrayList<Map<String,String>>();
 
           for(int i=0; i<PRODUCTS.size();i++) {
@@ -82,7 +58,7 @@ public class coinbaseProproducts {
               String min_quote = PRODUCTS.get(i).get("min_quote");
               String max_quote = PRODUCTS.get(i).get("max_quote");
               /*must contain USD; allow user to set preference*/
-              if (pair.contains(CURRENCY) && !pair.contains("USDC")) {
+       //       if (pair.contains(CURRENCY) && !pair.contains("USDC")) {
                   publicAPI publicread = new publicAPI(URI, "/products/" + pair + "/book");
                   JSONObject obj = publicread.getcallAPIObject();
                   Integer sequence = obj.getInt("sequence");
@@ -125,7 +101,7 @@ public class coinbaseProproducts {
                           System.out.println("couldn't sleep");
                       }*/
                   }
-              }
+            //  }
 
 
 
