@@ -8,7 +8,27 @@
 <a th:href="${link}">Sign in to coinbase</a>
 
 <main class="mdl-layout__content">
+    <div th:text="${ticker}"></div>
+    <div th:text="${trades}"></div>
     <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+        <thead>
+        <tr>
+            <th>Products</th>
+        </tr>
+        </thead>
+        <tbody id="dataTable">
+        <tr th:each="product:${products}">
+            <td><p th:text="${product}"></p></td>
+
+        </tr>
+
+        </tbody>
+    </table>
+
+
+
+
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
         <thead>
         <tr>
             <th>Pairs</th>
@@ -21,12 +41,12 @@
         </thead>
         <tbody id="dataTable">
         <tr th:each="list:${data}">
-            <td><a th:href="|/orders/${list.pair}|" th:text="${list.pair}"></a></td>
-            <td th:text="${list.bid_price}"></td>
-            <td th:text="${list.ask_price}"></td>
-            <td th:text="${list.spread}"></td>
-            <td th:text="${list.min_quote}"></td>
-            <td th:text="${list.max_quote}"></td>
+            <td><a th:href="|/orders/${list.pair}|" th:text="${list.pair}" th:id="|pair_${list.pair}|"></a></td>
+            <td><p th:id="|bid_${list.pair}|" th:text="${list.bid_price}"></p></td>
+            <td><p th:id="|ask_${list.pair}|" th:text="${list.ask_price}"></p></td>
+            <td><p th:id="|spread_${list.pair}|" th:text="${list.spread}"></p></td>
+            <td><p th:id="|min_${list.pair}|" th:text="${list.min_quote}"></p></td>
+            <td><p th:id="|max_${list.pair}|" th:text="${list.max_quote}"></p></td>
 
         </tr>
 
@@ -35,14 +55,16 @@
 
 </main>
 </body>
-<script>
+<script type="text/javascript">
 if (!!window.EventSource) {
 console.log("Event source available");
 
 var source = new EventSource('/pro/products/level1');
 
 source.addEventListener('message', function(e) {
-console.log(e.data);
+    console.log("message");
+    console.dir(e.data);
+    editTableData(e.data);
 
 });
 
@@ -52,6 +74,7 @@ console.log("Connection was opened.");
 
 source.addEventListener('error', function(e) {
 if (e.readyState == EventSource.CLOSED) {
+    console.dir(e);
 console.log("Connection was closed.");
 } else {
 console.log(e.readyState);
@@ -61,23 +84,38 @@ console.log(e.readyState);
 console.log("No SSE available");
 }
 
-function createTableData(data){
+function editTableData(input){
     var html = "";
-  /*  for(var i=0;i<data.length;i++){
+    var data = JSON.parse(input);
+    for(var i=0;i<data.length;i++){
+        var date = new Date();
+        var pair = data[i].pair;
+        var pair_tag = "pair_"+pair;
+        var bid_tag = "bid_"+pair;
+        var ask_tag = "ask_"+pair;
+        var spread_tag = "spread_"+pair;
+        var min_tag = "min_"+pair;
+        var max_tag = "max_"+pair;
 
-    <tr>
-            <td><a href="/orders/"+data[i]. ></a></td>
-        <td th:text="${list.bid_price}"></td>
-            <td th:text="${list.ask_price}"></td>
-            <td th:text="${list.spread}"></td>
-            <td th:text="${list.min_quote}"></td>
-            <td th:text="${list.max_quote}"></td>
-
-            </tr>
+        var pair_ele = document.getElementById(pair_tag);
+        pair_ele.innerHTML = pair+": "+date.getTime();
 
 
+        var bid_ele = document.getElementById(bid_tag);
+        var ask_ele = document.getElementById(ask_tag);
+        var spread_ele = document.getElementById(spread_tag);
+        var min_ele = document.getElementById(min_tag);
+        var max_ele = document.getElementById(max_tag);
 
-    }*/
+        bid_ele.innerHTML = data[i].bid_price;
+        ask_ele.innerHTML = data[i].ask_price;
+        spread_ele.innerHTML = data[i].spread;
+        min_ele.innerHTML = data[i].min_quote;
+        max_ele.innerHTML = data[i].max_quote;
+
+
+
+    }
 }
 
 </script>

@@ -52,7 +52,7 @@ public class RouterController {
             dollar_type = currency;
         }
 
-        coinbaseVariables.setCURRENCY(dollar_type);
+        coinbaseVariables.setDOLLARTYPE(dollar_type);
         coinbaseVariables.setURI(PROURL);
 
         coinbaseProproducts cbpropublic = new coinbaseProproducts();
@@ -64,12 +64,25 @@ public class RouterController {
         model.addAttribute("link", url);
         List data = cbpropublic.getAllProductsLevelOne();
         System.out.print(data);
+        model.addAttribute("products",coinbaseVariables.getPRODUCTS());
         model.addAttribute("data",data);
+
+        publicAPI publicread = new publicAPI(PROURL,"/products/BTC-USD/ticker");
+
+        //returns entire object
+        JSONObject ticker = publicread.getcallAPIObject();
+        model.addAttribute("ticker",ticker);
+
+        publicAPI publicread1 = new publicAPI(PROURL,"/products/BTC-USD/trades");
+
+        //returns entire object
+        JSONArray trades = publicread1.getprocallAPIArray();
+        model.addAttribute("trades",trades);
         return "home";
     }
 
 
-    @RequestMapping(value = "/{currency}")
+    @RequestMapping(value = "/currency/{currency}")
     public String indexwithPath(Model model, @PathVariable(value = "currency", required=false) String currency) {
         System.out.println("\n....................................This should show....................................\n");
 
@@ -78,7 +91,7 @@ public class RouterController {
             /*compare to part of an enum in app props*/
             dollar_type = currency;
         }
-        coinbaseVariables.setCURRENCY(dollar_type);
+        coinbaseVariables.setDOLLARTYPE(dollar_type);
         coinbaseVariables.setURI(PROURL);
 
         coinbaseProproducts cbpropublic = new coinbaseProproducts();

@@ -13,7 +13,7 @@ public class coinbaseProproducts {
 
     public void setProductList(){
         String URI = coinbaseVariables.getURI();
-        String CURRENCY = coinbaseVariables.getCURRENCY();
+        String CURRENCY = coinbaseVariables.getDOLLARTYPE();
         List<Map<String,String>> listofobjects = new ArrayList<Map<String,String>>();
         //set endpoint
         publicAPI publicread = new publicAPI(URI,"/products");
@@ -43,10 +43,66 @@ public class coinbaseProproducts {
         coinbaseVariables.setPRODUCTS(listofobjects);
     }
 
+    public JSONArray getAllProductsLevelOneUnprocessed(){
+        String URI = coinbaseVariables.getURI();
+        String curry = coinbaseVariables.getDOLLARTYPE();
+        System.out.print("DOLLAR type: "+curry+"\n");
+        System.out.print("DOLLAR URI: "+URI+"\n");
+        List<Map<String,String>> PRODUCTS = coinbaseVariables.getPRODUCTS();
+        System.out.print(PRODUCTS);
+        JSONArray listofobjects = new JSONArray();
+        System.out.print(PRODUCTS.toString());
+        for(int i=0; i<PRODUCTS.size();i++) {
+            String pair = PRODUCTS.get(i).get("pair");
+            String min_quote = PRODUCTS.get(i).get("min_quote");
+            String max_quote = PRODUCTS.get(i).get("max_quote");
+              /*must contain USD; allow user to set preference*/
+            //       if (pair.contains(CURRENCY) && !pair.contains("USDC")) {
+            publicAPI publicread = new publicAPI(URI, "/products/" + pair + "/book");
+            JSONObject obj = publicread.getcallAPIObject();
+            Integer sequence = obj.getInt("sequence");
+
+            JSONArray bid_array = obj.getJSONArray("bids");
+
+            JSONArray asks_array = obj.getJSONArray("asks");
+
+
+            JSONArray bid = bid_array.getJSONArray(0);
+            JSONArray ask = asks_array.getJSONArray(0);
+
+
+            String bid_price = bid.get(0).toString();
+            String bid_size = bid.get(1).toString();
+            String bid_orders = bid.get(2).toString();
+
+
+            String ask_price = ask.get(0).toString();
+            String ask_size = ask.get(1).toString();
+            String ask_orders = ask.get(2).toString();
+
+            Float spread = Float.parseFloat(bid_price) - Float.parseFloat(ask_price);
+
+            JSONObject stringobject = new JSONObject();
+
+            stringobject.put("pair", pair);
+            stringobject.put("bid_price", bid_price);
+            stringobject.put("ask_price", ask_price);
+            stringobject.put("spread", spread.toString());
+            stringobject.put("min_quote", min_quote);
+            stringobject.put("max_quote", max_quote);
+            System.out.println("map 1");
+            System.out.print(stringobject);
+            System.out.println("map 2");
+            listofobjects.put(stringobject);
+        }
+        return listofobjects;
+
+    }
+
 
     public List<Map<String,String>> getAllProductsLevelOne(){
         String URI = coinbaseVariables.getURI();
-        String CURRENCY = coinbaseVariables.getCURRENCY();
+        String CURRENCY = coinbaseVariables.getDOLLARTYPE();
         System.out.print("DOLLAR type: "+CURRENCY+"\n");
         System.out.print("DOLLAR URI: "+URI+"\n");
         List<Map<String,String>> PRODUCTS = coinbaseVariables.getPRODUCTS();
@@ -90,7 +146,7 @@ public class coinbaseProproducts {
                       stringobject.put("ask_price", ask_price);
                       stringobject.put("spread", spread.toString());
                       stringobject.put("min_quote", min_quote);
-                        stringobject.put("max_quote", min_quote);
+                        stringobject.put("max_quote", max_quote);
                       System.out.println("map 1");
                       System.out.print(stringobject);
                       System.out.println("map 2");

@@ -1,9 +1,11 @@
 package com.triche.coinbase.demo;
 
 import org.json.JSONObject;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import triche.coinbase.curl.publicAPI;
 
@@ -25,7 +27,9 @@ public class ServerSent {
     Integer count1 = 0;
     Integer intcout = 0;
 
-    @RequestMapping("/serversent/{includeme}")
+    @RequestMapping(value="/serversent/{includeme}",
+            method= RequestMethod.GET,
+            produces="application/json")
     public @ResponseBody String sendMessage(HttpServletResponse response, @PathVariable("includeme") String subpath) {
         publicAPI publicread = new publicAPI("https://api.coinbase.com/v2","/prices/BTC-USD/buy");
 
@@ -33,7 +37,8 @@ public class ServerSent {
 
         //returns entire object
         JSONObject data = null;
-                response.setContentType("text/event-stream");
+        response.setContentType("text/event-stream");
+        response.setContentType("application/json;charset=UTF-8");
 
         try {
             Thread.sleep(3000);

@@ -14,7 +14,6 @@ public class resourceConfig implements WebMvcConfigurer {
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //    if (!registry.hasMappingForPattern("/webjars/**")) {
                 registry.addResourceHandler("/style/**")
-
                         .addResourceLocations("/webjars/material-design-lite/1.1.0/");
             }
            // registry.setOrder(1);

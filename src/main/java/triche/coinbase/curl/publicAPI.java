@@ -42,11 +42,9 @@ public class publicAPI {
         HttpEntity entity = new HttpEntity(headers);
 
         //executing the GET call
-        System.out.println("CALLING: "+API_URL);
         HttpEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.GET, entity, String.class);
         /*HttpEntity<String> response = restTemplate.getForEntity(API_URL, String.class);*/
         //retrieving the response
-        System.out.println("Response"+ response.getBody());
         return new JSONArray(response.getBody());
     }
 

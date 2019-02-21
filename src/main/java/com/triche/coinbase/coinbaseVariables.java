@@ -5,11 +5,11 @@ import java.util.Map;
 
 public class coinbaseVariables {
 
-    private static String URI = "";
-    private static String DOLLAR_TYPE = "";
+    private static String URI;
+    private static String DOLLAR_TYPE;
     private static List<Map<String,String>> PRODUCTS;
 
-    public static void setCURRENCY(String CURRENCY) {
+    public static void setDOLLARTYPE(String CURRENCY) {
         coinbaseVariables.DOLLAR_TYPE = CURRENCY;
     }
 
@@ -25,7 +25,7 @@ public class coinbaseVariables {
         return URI;
     }
 
-    public static String getCURRENCY() {
+    public static String getDOLLARTYPE() {
         return DOLLAR_TYPE;
     }
 
