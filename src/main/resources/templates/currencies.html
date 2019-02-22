@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/heading :: heading">
+
+
+</head>
+<body>
+<a th:href="${link}">Sign in to coinbase</a>
+
+<main class="mdl-layout__content">
+  <div class="mdl-card" th:each="list:${data}">
+        <div class="mdl-card__title">
+            <h2 th:text="${list.id}"></h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <p th:text="${list.name}"> </p>
+        </div>
+        <div class="mdl-card__actions">
+            <a th:href="|/orders/${list.id}|">View Orders</a>
+            <a th:href="|/rates/${list.id}|">View Exchange</a>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

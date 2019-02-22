@@ -12,7 +12,7 @@ import java.util.Map;
 public class coinbaseProproducts {
 
     public void setProductList(){
-        String URI = coinbaseVariables.getURI();
+        String URI = coinbaseVariables.getPROURI();
         String CURRENCY = coinbaseVariables.getDOLLARTYPE();
         List<Map<String,String>> listofobjects = new ArrayList<Map<String,String>>();
         //set endpoint
@@ -44,7 +44,7 @@ public class coinbaseProproducts {
     }
 
     public JSONArray getAllProductsLevelOneUnprocessed(){
-        String URI = coinbaseVariables.getURI();
+        String URI = coinbaseVariables.getPROURI();
         String curry = coinbaseVariables.getDOLLARTYPE();
         System.out.print("DOLLAR type: "+curry+"\n");
         System.out.print("DOLLAR URI: "+URI+"\n");
@@ -101,7 +101,7 @@ public class coinbaseProproducts {
 
 
     public List<Map<String,String>> getAllProductsLevelOne(){
-        String URI = coinbaseVariables.getURI();
+        String URI = coinbaseVariables.getPROURI();
         String CURRENCY = coinbaseVariables.getDOLLARTYPE();
         System.out.print("DOLLAR type: "+CURRENCY+"\n");
         System.out.print("DOLLAR URI: "+URI+"\n");

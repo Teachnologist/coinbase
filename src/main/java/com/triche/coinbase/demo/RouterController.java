@@ -1,5 +1,6 @@
 package com.triche.coinbase.demo;
 
+import com.triche.coinbase.coinbaseFreedata;
 import com.triche.coinbase.coinbaseProproducts;
 import com.triche.coinbase.coinbaseVariables;
 import org.json.JSONArray;
@@ -10,9 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import triche.coinbase.curl.publicAPI;
 import triche.coinbase.curl.readAPI;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -42,48 +46,23 @@ public class RouterController {
 
     String CODE = null;
 
+    String url = "https://www.coinbase.com/oauth/authorize?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URL + "&response_type=code&scope=" + SCOPE;
+
     @RequestMapping(value = "/")
-    public String index(Model model, @PathVariable(value = "currency", required=false) String currency) {
-        System.out.println("\n....................................This should show 2....................................\n");
+    public String index(Model model) {
+        System.out.println("\n....................................This should show currencies....................................\n");
+        coinbaseVariables.setCBUri(URL);
 
-        String dollar_type = "USD";
-        if(currency != null){
-            /*compare to part of an enum in app props*/
-            dollar_type = currency;
-        }
+        coinbaseFreedata mod = new coinbaseFreedata();
+        model.addAttribute("data",mod.getAllCurrencies());
 
-        coinbaseVariables.setDOLLARTYPE(dollar_type);
-        coinbaseVariables.setURI(PROURL);
-
-        coinbaseProproducts cbpropublic = new coinbaseProproducts();
-        cbpropublic.setProductList();
-
-
-        /*TODO make login button with this attribute*/
-        String url = "https://www.coinbase.com/oauth/authorize?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URL + "&response_type=code&scope=" + SCOPE;
-        model.addAttribute("link", url);
-        List data = cbpropublic.getAllProductsLevelOne();
-        System.out.print(data);
-        model.addAttribute("products",coinbaseVariables.getPRODUCTS());
-        model.addAttribute("data",data);
-
-        publicAPI publicread = new publicAPI(PROURL,"/products/BTC-USD/ticker");
-
-        //returns entire object
-        JSONObject ticker = publicread.getcallAPIObject();
-        model.addAttribute("ticker",ticker);
-
-        publicAPI publicread1 = new publicAPI(PROURL,"/products/BTC-USD/trades");
-
-        //returns entire object
-        JSONArray trades = publicread1.getprocallAPIArray();
-        model.addAttribute("trades",trades);
-        return "home";
+        System.out.println("\n....................................Currencies loaded ....................................\n");
+        return "currencies";
     }
 
 
-    @RequestMapping(value = "/currency/{currency}")
-    public String indexwithPath(Model model, @PathVariable(value = "currency", required=false) String currency) {
+    @RequestMapping(value = "/orders/{currency}")
+    public String indexwithPath(Model model, @PathVariable(value = "currency", required=false) String currency){
         System.out.println("\n....................................This should show....................................\n");
 
         String dollar_type = "USD";
@@ -92,7 +71,7 @@ public class RouterController {
             dollar_type = currency;
         }
         coinbaseVariables.setDOLLARTYPE(dollar_type);
-        coinbaseVariables.setURI(PROURL);
+        coinbaseVariables.setPROURI(PROURL);
 
         coinbaseProproducts cbpropublic = new coinbaseProproducts();
         cbpropublic.setProductList();
@@ -100,16 +79,22 @@ public class RouterController {
 
         /*TODO make login button with this attribute*/
         String url = "https://www.coinbase.com/oauth/authorize?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URL + "&response_type=code&scope=" + SCOPE;
-        model.addAttribute("link", url);
+
         List data = cbpropublic.getAllProductsLevelOne();
         System.out.print(data);
-        model.addAttribute("data",data);
-        return "home";
+        if(data.size() > 0) {
+            model.addAttribute("link", url);
+            model.addAttribute("data", data);
+            return "orders";
+        }
+            return "redirect:/";
     }
 
-    @RequestMapping(value = "/orders/{pairs}")
+    @RequestMapping(value = "/orders/level1/{pairs}")
     public void orderPairs(Model model, @PathVariable(value = "pairs", required=false) String pairs) {
         System.out.println("\n....................................This should show....................................\n");
+        coinbaseVariables.setPAIRS(pairs);
+
 System.out.println("GOT IT!: "+pairs);
     }
 
