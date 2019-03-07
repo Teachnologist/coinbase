@@ -52,9 +52,24 @@ public class RouterController {
     public String index(Model model) {
         System.out.println("\n....................................This should show currencies....................................\n");
         coinbaseVariables.setCBUri(URL);
+        coinbaseVariables.setPROURI(PROURL);
+
+        coinbaseProproducts cbpropublic = new coinbaseProproducts();
+        cbpropublic.setActiveproducts();
 
         coinbaseFreedata mod = new coinbaseFreedata();
-        model.addAttribute("data",mod.getAllCurrencies());
+
+
+
+
+        model.addAttribute("data",mod.getAllProductConversionsAsList());
+
+
+    /*    model.addAttribute("usd","$");
+        model.addAttribute("eur","€");
+        model.addAttribute("gbp","£");
+
+        model.addAttribute("data",mod.getAllCurrencies());*/
 
         System.out.println("\n....................................Currencies loaded ....................................\n");
         return "currencies";

@@ -7,20 +7,111 @@
 <body>
 <a th:href="${link}">Sign in to coinbase</a>
 
+
 <main class="mdl-layout__content">
-  <div class="mdl-card" th:each="list:${data}">
+
+    <!--<div>
+
+        <h1 th:text="${usd}" style="color:green;"></h1>
+        <h1 th:text="${eur}" style="color:blue;"></h1>
+        <h1 th:text="${gbp}"></h1>
+
+
+
+
+    </div>-->
+
+    <div class="custom-jumbotron" th:each="list:${data}">
+        <div style="background-color:pink;width:50%">
+            <div style="width:100%;background-color:brown;"><h1 th:text="${list.key}"></h1></div>
+            <div style="width:100%;background-color:purple;"><p th:text="|As of ${list.date}|"></p></div>
+        </div>
+        <div style="background-color:green;width:50%">
+            <table>
+                <tr th:each="item:${list.values}" >
+                    <td><p th:text="${item.quote}" style="color:red;"></p></td>
+                    <td><p th:text="${item.rate}" style="color:blue;"></p></td>
+                </tr>
+
+            </table>
+        </div>
+
+        <table>
+        <tr>
+            <td></td>
+
+
+
+        </tr>
+
+        </table>
+
+
+    </div>
+
+
+
+
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+  <div class="mdl-card custom-card" th:each="list:${data}">
         <div class="mdl-card__title">
-            <h2 th:text="${list.id}"></h2>
+            <h2 th:text="${list.key}"></h2>
         </div>
         <div class="mdl-card__supporting-text">
-            <p th:text="${list.name}"> </p>
+            <div style="width:50%; background-color:pink;">
+                <table>
+                    <tr th:each="item:${list.values}" >
+                        <td><p th:text="${item.quote}" style="color:red;"></p></td>
+                        <td><p th:text="${item.rate}" style="color:blue;"></p></td>
+                    </tr>
+
+
+                </table>
+
+            </div>
+            <div style="width:50%; background-color:blue;">
+            <table>
+                <tr th:each="item:${list.values}" >
+                    <td><p th:text="${item.quote}" style="color:red;"></p></td>
+                    <td><p th:text="${item.rate}" style="color:blue;"></p></td>
+                </tr>
+
+
+            </table>
+            </div>
         </div>
         <div class="mdl-card__actions">
-            <a th:href="|/orders/${list.id}|">View Orders</a>
-            <a th:href="|/rates/${list.id}|">View Exchange</a>
+        <!--    <a th:href="|/orders/${list.id}|">View Orders</a>
+            <a th:href="|/rates/${list.id}|">View Exchange</a>-->
         </div>
+    </div>
+            </div>
     </div>
 
 </main>
 </body>
+<style>
+
+
+
+    .custom-jumbotron{
+        min-width:360px;
+        width:90%;
+        display: inline-flex;
+        border-style:solid;
+        align-items: center;
+        padding: 5px;
+        margin-bottom: 5px;
+
+    }
+
+    .custom-card{
+        min-width:360px;
+        width:100%;
+        border-style:solid;
+
+    }
+
+</style>
 </html>

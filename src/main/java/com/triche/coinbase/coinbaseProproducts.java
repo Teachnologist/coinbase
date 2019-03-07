@@ -11,6 +11,40 @@ import java.util.Map;
 
 public class coinbaseProproducts {
 
+    public void setActiveproducts(){
+        String URI = coinbaseVariables.getPROURI();
+        String CURRENCY = coinbaseVariables.getDOLLARTYPE();
+        List<String> base_currencies = new ArrayList<String>();
+        List<String> quote_currencies = new ArrayList<String>();
+        //set endpoint
+        publicAPI publicread = new publicAPI(URI,"/products");
+
+        //get json from endpoint - in this case, it returns an array that does not have to be unwrapped
+        JSONArray arr = publicread.getprocallAPIArray();
+
+
+        for(int i=0;i<arr.length();i++){
+            JSONObject obj = new JSONObject(arr.get(i).toString());
+
+            String base = obj.get("base_currency").toString();
+            String quote = obj.get("quote_currency").toString();
+
+            if(base_currencies.indexOf(base) < 0){
+                base_currencies.add(base);
+            }
+
+            if(quote_currencies.indexOf(quote) < 0){
+                quote_currencies.add(quote);
+            }
+
+        }
+        coinbaseVariables.setBaseCurrencies(base_currencies);
+        coinbaseVariables.setQuoteCurrencies(quote_currencies);
+    }
+
+
+
+
     public void setProductList(){
         String URI = coinbaseVariables.getPROURI();
         String CURRENCY = coinbaseVariables.getDOLLARTYPE();
@@ -42,6 +76,8 @@ public class coinbaseProproducts {
         }
         coinbaseVariables.setPRODUCTS(listofobjects);
     }
+
+
 
     public JSONArray getAllProductsLevelOneUnprocessed(){
         String URI = coinbaseVariables.getPROURI();
