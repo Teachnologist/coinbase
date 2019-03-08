@@ -21,16 +21,17 @@
 
     </div>-->
 
-    <div class="custom-jumbotron" th:each="list:${data}">
+    <div class="custom-jumbotron manteka" th:each="list:${data}">
         <div style="background-color:pink;width:50%">
             <div style="width:100%;background-color:brown;"><h1 th:text="${list.key}"></h1></div>
-            <div style="width:100%;background-color:purple;"><p th:text="|As of ${list.date}|"></p></div>
+            <div style="width:100%;background-color:purple;"><p th:id="|date-${list.key}|" th:text="|As of ${list.date}|"></p></div>
         </div>
         <div style="background-color:green;width:50%">
-            <table>
+            <table th:id="|key-${list.key}|">
                 <tr th:each="item:${list.values}" >
-                    <td><p th:text="${item.quote}" style="color:red;"></p></td>
-                    <td><p th:text="${item.rate}" style="color:blue;"></p></td>
+                    <td><p th:text="${item.quote}" th:id="|quote-${item.pair}|" style="color:red;"></p></td>
+                    <td><p th:text="${item.rate}" th:id="|rate-${item.pair}|" style="color:blue;"></p></td>
+                    <td><p th:text="0" th:id="|diff-${item.pair}|" style="color:blue;"></p></td>
                 </tr>
 
             </table>
@@ -54,38 +55,6 @@
 
     <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
-  <div class="mdl-card custom-card" th:each="list:${data}">
-        <div class="mdl-card__title">
-            <h2 th:text="${list.key}"></h2>
-        </div>
-        <div class="mdl-card__supporting-text">
-            <div style="width:50%; background-color:pink;">
-                <table>
-                    <tr th:each="item:${list.values}" >
-                        <td><p th:text="${item.quote}" style="color:red;"></p></td>
-                        <td><p th:text="${item.rate}" style="color:blue;"></p></td>
-                    </tr>
-
-
-                </table>
-
-            </div>
-            <div style="width:50%; background-color:blue;">
-            <table>
-                <tr th:each="item:${list.values}" >
-                    <td><p th:text="${item.quote}" style="color:red;"></p></td>
-                    <td><p th:text="${item.rate}" style="color:blue;"></p></td>
-                </tr>
-
-
-            </table>
-            </div>
-        </div>
-        <div class="mdl-card__actions">
-        <!--    <a th:href="|/orders/${list.id}|">View Orders</a>
-            <a th:href="|/rates/${list.id}|">View Exchange</a>-->
-        </div>
-    </div>
             </div>
     </div>
 
@@ -114,4 +83,76 @@
     }
 
 </style>
+
+<script type="text/javascript">
+    if (!!window.EventSource) {
+        console.log("Event source available");
+
+        var source = new EventSource('/sse/currencies');
+
+        var last_value_object = {};
+
+        source.addEventListener('message', function(e) {
+            console.log("this was from message");
+            console.log(e.data);
+            var d = JSON.parse(e.data);
+            console.dir(d);
+
+            for(var i=0;i<d.length;i++){
+                console.dir(d[i]);
+                var key = d[i]["key"];
+                var values = d[i]["values"];
+
+                var date_id="date-"+key;
+
+                for(var q=0;q<values.length;q++){
+                    var pair = values[q]["pair"];
+                    var rate_id="rate-"+pair;
+                    var diff_id="diff-"+pair;
+
+                    var last_value = (typeof last_value_object[rate_id] != "undefined") ? last_value_object[rate_id]:0;
+                    var difference = parseFloat(values[q]["rate"]) - parseFloat(last_value);
+
+                    document.getElementById(rate_id).innerText=values[q]["rate"];
+                    document.getElementById(diff_id).innerText=difference;
+
+                    if(difference > 0){
+                        document.getElementById(rate_id).style.backgroundColor="yellow";
+                    }else if(difference < 0){
+                        document.getElementById(rate_id).style.backgroundColor="red";
+                    }
+                    else{
+                        document.getElementById(rate_id).style.backgroundColor="grey";
+                    }
+                    last_value_object[rate_id] = values[q]["rate"];
+                }
+                document.getElementById(date_id).innerText=d[i]["date"];
+            }
+            console.log("this was from message");
+
+        });
+
+        source.addEventListener('currencies', function(e) {
+            console.log("this was from currencies");
+            console.log(e.data);
+            console.log("this was from currencies");
+
+        });
+
+        source.addEventListener('open', function(e) {
+            console.log("Connection was opened.");
+        }, false);
+
+        source.addEventListener('error', function(e) {
+            if (e.readyState == EventSource.CLOSED) {
+                console.log("Connection was closed.");
+            } else {
+                console.log(e.readyState);
+            }
+        }, false);
+    } else {
+        console.log("No SSE available");
+    }
+
+</script>
 </html>

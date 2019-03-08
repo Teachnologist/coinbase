@@ -46,13 +46,19 @@ System.out.print("base_currencies: "+base_currencies.toString()+"\n");
                 if(rates.has(uppercase_quote)){
                     String rate = rates.get(uppercase_quote).toString();
                 if (rate != null) {
-                    quoteobject.put(uppercase_quote, rate);
+
+                    quoteobject.put("quote",uppercase_quote);
+                    quoteobject.put("rate",rate);
+                    String pair = b_currency+"-"+uppercase_quote;
+                    quoteobject.put("pair",pair);
                     listofobject.put(quoteobject);
                 }
             }
                 //[{BTC:{USD:100,EUR:200,...    }]
             }
             bigobject.put("key",b_currency);
+            String date = new Date().toString();
+            bigobject.put("date",date);
             bigobject.put("values",listofobject);
             arr.put(bigobject);
         }
@@ -98,6 +104,8 @@ System.out.print("base_currencies: "+base_currencies.toString()+"\n");
                     if (rate != null) {
                         quoteobject.put("quote",uppercase_quote);
                         quoteobject.put("rate",rate);
+                        String pair = b_currency+"-"+uppercase_quote;
+                        quoteobject.put("pair",pair);
                         quoteobject.put(uppercase_quote, rate);
                         listofobject.add(quoteobject);
                     }
