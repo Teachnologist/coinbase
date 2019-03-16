@@ -62,6 +62,7 @@ public class RouterController {
 
 
 
+        model.addAttribute("client_date",new Date().toString());
         model.addAttribute("data",mod.getAllProductConversionsAsList());
 
 

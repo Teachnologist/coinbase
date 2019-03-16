@@ -57,8 +57,9 @@ System.out.print("base_currencies: "+base_currencies.toString()+"\n");
                 //[{BTC:{USD:100,EUR:200,...    }]
             }
             bigobject.put("key",b_currency);
-            String date = new Date().toString();
-            bigobject.put("date",date);
+            Date date = new Date();
+            bigobject.put("date",date.toString());
+            bigobject.put("milliseconds",date.getTime());
             bigobject.put("values",listofobject);
             arr.put(bigobject);
         }

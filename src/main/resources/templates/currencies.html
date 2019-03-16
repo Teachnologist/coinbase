@@ -10,51 +10,40 @@
 
 <main class="mdl-layout__content">
 
-    <!--<div>
 
-        <h1 th:text="${usd}" style="color:green;"></h1>
-        <h1 th:text="${eur}" style="color:blue;"></h1>
-        <h1 th:text="${gbp}"></h1>
-
-
-
-
-    </div>-->
-
-    <div class="custom-jumbotron manteka" th:each="list:${data}">
-        <div style="background-color:pink;width:50%">
-            <div style="width:100%;background-color:brown;"><h1 th:text="${list.key}"></h1></div>
-            <div style="width:100%;background-color:purple;"><p th:id="|date-${list.key}|" th:text="|As of ${list.date}|"></p></div>
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+            <h4 class="title-text center-item">My date: <span id="client-date" th:text="${client_date}"></span></h4>
         </div>
-        <div style="background-color:green;width:50%">
-            <table th:id="|key-${list.key}|">
+        <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone" th:each="list:${data}">
+
+    <div class="custom-jumbotron manteka">
+        <div class="inner-width">
+            <div style="width:100%;"><h1 class="title-text center-item" th:text="${list.key}"></h1></div>
+            <div style="width:100%;"><p class="title-text center-item" th:id="|date-${list.key}|" th:text="|As of ${list.date}|"></p></div>
+            <div style="width:100%;"><p class="title-text center-item" th:id="|latency-${list.key}|"></p></div>
+        </div>
+        <div class="inner-width">
+            <table th:id="|key-${list.key}|" class="fixed-table">
+                <thead>
+                <th>Currency</th>
+                <th>Last Value</th>
+                <th>Change</th>
+
+                </thead>
+                <tbody>
                 <tr th:each="item:${list.values}" >
-                    <td><p th:text="${item.quote}" th:id="|quote-${item.pair}|" style="color:red;"></p></td>
-                    <td><p th:text="${item.rate}" th:id="|rate-${item.pair}|" style="color:blue;"></p></td>
-                    <td><p th:text="0" th:id="|diff-${item.pair}|" style="color:blue;"></p></td>
+                    <td><p th:text="${item.quote}" th:id="|quote-${item.pair}|" class="title-text p-text"></p></td>
+                    <td><p th:text="${item.rate}" th:id="|rate-${item.pair}|" class="p-text"></p></td>
+                    <td><p th:text="NA" th:id="|diff-${item.pair}|" class="p-text"></p></td>
                 </tr>
+                </tbody>
 
             </table>
         </div>
 
-        <table>
-        <tr>
-            <td></td>
-
-
-
-        </tr>
-
-        </table>
-
 
     </div>
-
-
-
-
-    <div class="mdl-grid">
-        <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
             </div>
     </div>
 
@@ -62,37 +51,148 @@
 </body>
 <style>
 
+    @media all and (min-width: 480px) {
+        .custom-jumbotron {
+            min-width:360px;
+            width:90%;
+            display: inline-flex;
+            border-style:solid;
+            align-items: center;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
 
+        .inner-width {
+            width:50%;
+        }
+
+        .custom-card{
+            min-width:360px;
+            width:100%;
+            border-style:solid;
+
+        }
+
+
+    }
+
+    .title-text{
+        font-family: Manteka,"sans-serif";
+        color: grey;
+    }
+
+    .fixed-table {
+        width:100%;
+        margin: 0 auto;
+        table-layout: fixed;
+    }
+
+    .p-text {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
+        overflow: hidden
+    }
+
+    .inner-width {
+        width:100%;
+    }
 
     .custom-jumbotron{
-        min-width:360px;
         width:90%;
-        display: inline-flex;
         border-style:solid;
-        align-items: center;
         padding: 5px;
         margin-bottom: 5px;
 
     }
 
-    .custom-card{
-        min-width:360px;
-        width:100%;
+    .center-item {
+        margin: 0 auto !important;
+        text-align: center;
+    }
+
+
+
+
+
+
+/*
+    .demo-card-wide.mdl-card {
+        width: 90%;
+        margin: 0 auto;
         border-style:solid;
+        border-width:thin;
+        color:grey;
 
     }
+    .demo-card-wide > .mdl-card__title {
+        width:auto;
+        height: auto;
+        color:grey !important;
+        font-weight:bolder !important;
+
+    }
+
+    .center-item {
+        margin: 0 auto !important;
+        text-align: center;
+    }
+
+    .demo-card-wide > .mdl-card__menu {
+        color: #fff;
+    }*/
+
+
+
+
+
+
 
 </style>
 
 <script type="text/javascript">
+    var client_date = new Date();
+    document.getElementById("client-date").innerText=client_date;
     if (!!window.EventSource) {
         console.log("Event source available");
 
         var source = new EventSource('/sse/currencies');
 
         var last_value_object = {};
+        var last_date_time = {};
+
+        var SSE_SUCCESS = false;
+
+        setInterval(function(){
+            client_date = new Date();
+
+            var options = {
+                "weekday": "short","month":"short",
+                "day":"2-digit","hour":"2-digit","minute":"2-digit","second":"2-digit","timeZoneName":"short","year":"numeric"
+            };
+            document.getElementById("client-date").innerText=client_date.toLocaleString(undefined,options);
+
+            if(SSE_SUCCESS){
+                writeClientLatency(client_date,"grey");
+            }
+
+        },1000);
+
+        function writeClientLatency(dateobject,elecolor){
+            for (key in last_date_time) {
+                var latency_id="latency-"+key;
+                var value = last_date_time[key];
+                var latency = parseInt(value) - parseInt(dateobject.getTime());
+                document.getElementById(latency_id).innerText=latency+" ms ago";
+                document.getElementById(latency_id).style.color = elecolor;
+            }
+
+
+        }
+
 
         source.addEventListener('message', function(e) {
+
             console.log("this was from message");
             console.log(e.data);
             var d = JSON.parse(e.data);
@@ -104,33 +204,62 @@
                 var values = d[i]["values"];
 
                 var date_id="date-"+key;
+                var latency_id="latency-"+key;
 
                 for(var q=0;q<values.length;q++){
                     var pair = values[q]["pair"];
                     var rate_id="rate-"+pair;
                     var diff_id="diff-"+pair;
+                    var quote_id="quote-"+pair;
+                    var difference = null;
 
-                    var last_value = (typeof last_value_object[rate_id] != "undefined") ? last_value_object[rate_id]:0;
-                    var difference = parseFloat(values[q]["rate"]) - parseFloat(last_value);
+
 
                     document.getElementById(rate_id).innerText=values[q]["rate"];
-                    document.getElementById(diff_id).innerText=difference;
 
-                    if(difference > 0){
-                        document.getElementById(rate_id).style.backgroundColor="yellow";
-                    }else if(difference < 0){
-                        document.getElementById(rate_id).style.backgroundColor="red";
+                    var last_value = (typeof last_value_object[rate_id] != "undefined") ? last_value_object[rate_id]:null;
+
+                    if(last_value) {
+                        console.log("has last value");
+                        difference = parseFloat(values[q]["rate"]) - parseFloat(last_value);
+                        document.getElementById(diff_id).innerText = difference;
+                        document.getElementById(quote_id).style.color="black";
+                    }else{
+                        console.log("last value null");
+
+                    }
+
+                    if(difference && difference > 0){
+                        document.getElementById(rate_id).style.color="green";
+                    }else if(difference && difference < 0){
+                        document.getElementById(rate_id).style.color="red";
                     }
                     else{
-                        document.getElementById(rate_id).style.backgroundColor="grey";
+                        document.getElementById(quote_id).style.color="grey";
+                        document.getElementById(rate_id).style.color="grey";
                     }
                     last_value_object[rate_id] = values[q]["rate"];
                 }
-                document.getElementById(date_id).innerText=d[i]["date"];
+
+                document.getElementById(date_id).innerText="As of "+d[i]["date"];
+
+
+                var client_time = client_date.getTime();
+                var latency = parseInt(d[i]["milliseconds"]) - parseInt(client_time);
+
+                document.getElementById(latency_id).style.color = "green";
+                document.getElementById(latency_id).innerText=latency+" ms ago (latest)";
+
+                last_date_time[key] = d[i]["milliseconds"];
+                SSE_SUCCESS=true;
+
+                console.log("Client time: "+client_time+" Server Time: "+d[i]["seconds"]);
             }
             console.log("this was from message");
 
         });
+
+
 
         source.addEventListener('currencies', function(e) {
             console.log("this was from currencies");
