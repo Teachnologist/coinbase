@@ -13,7 +13,7 @@
 
     <div class="mdl-grid">
         <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
-            <h4 class="title-text center-item">My date: <span id="client-date" th:text="${client_date}"></span></h4>
+            <h4 class="title-text center-item" id="client-date" th:text="${client_date}"></h4>
         </div>
         <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone" th:each="list:${data}">
 
@@ -24,7 +24,7 @@
             <div style="width:100%;"><p class="title-text center-item" th:id="|latency-${list.key}|"></p></div>
         </div>
         <div class="inner-width">
-            <table th:id="|key-${list.key}|" class="fixed-table">
+            <table th:id="|key-${list.key}|" class="fixed-table mdl-data-table mdl-js-data-table">
                 <thead>
                 <th>Currency</th>
                 <th>Last Value</th>
@@ -57,9 +57,9 @@
             width:90%;
             display: inline-flex;
             border-style:solid;
+            border-width: thin;
+            border-color:lightgray;
             align-items: center;
-            padding: 5px;
-            margin-bottom: 5px;
         }
 
         .inner-width {
@@ -99,10 +99,10 @@
     }
 
     .custom-jumbotron{
-        width:90%;
+        width:100%;
         border-style:solid;
-        padding: 5px;
-        margin-bottom: 5px;
+        border-width: thin;
+        border-color:lightgray;
 
     }
 
@@ -110,43 +110,6 @@
         margin: 0 auto !important;
         text-align: center;
     }
-
-
-
-
-
-
-/*
-    .demo-card-wide.mdl-card {
-        width: 90%;
-        margin: 0 auto;
-        border-style:solid;
-        border-width:thin;
-        color:grey;
-
-    }
-    .demo-card-wide > .mdl-card__title {
-        width:auto;
-        height: auto;
-        color:grey !important;
-        font-weight:bolder !important;
-
-    }
-
-    .center-item {
-        margin: 0 auto !important;
-        text-align: center;
-    }
-
-    .demo-card-wide > .mdl-card__menu {
-        color: #fff;
-    }*/
-
-
-
-
-
-
 
 </style>
 
