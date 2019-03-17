@@ -33,7 +33,9 @@
                 </thead>
                 <tbody>
                 <tr th:each="item:${list.values}" >
-                    <td><p th:text="${item.quote}" th:id="|quote-${item.pair}|" class="title-text p-text"></p></td>
+                    <td th:if="${item.validpair != null}"><a th:href="|/orders/level2/${item.validpair}|"><p th:text="${item.quote}" th:id="|quote-${item.pair}|" class="title-text p-text"></p></a></td>
+                    <td th:if="${item.validpair == null}"><p th:text="${item.quote}" th:id="|quote-${item.pair}|" class="title-text p-text"></p></td>
+
                     <td><p th:text="${item.rate}" th:id="|rate-${item.pair}|" class="p-text"></p></td>
                     <td><p th:text="NA" th:id="|diff-${item.pair}|" class="p-text"></p></td>
                 </tr>

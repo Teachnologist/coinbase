@@ -49,6 +49,7 @@ public class coinbaseProproducts {
         String URI = coinbaseVariables.getPROURI();
         String CURRENCY = coinbaseVariables.getDOLLARTYPE();
         List<Map<String,String>> listofobjects = new ArrayList<Map<String,String>>();
+        List<String> listofpairs = new ArrayList<String>();
         //set endpoint
         publicAPI publicread = new publicAPI(URI,"/products");
 
@@ -59,7 +60,6 @@ public class coinbaseProproducts {
         for(int i=0;i<arr.length();i++){
             JSONObject obj = new JSONObject(arr.get(i).toString());
 
-            if(obj.get("id").toString().contains(CURRENCY) && !obj.get("id").toString().contains("USDC")) {
 
                 Map<String, String> stringobject = new HashMap<String, String>();
 
@@ -70,11 +70,62 @@ public class coinbaseProproducts {
                 stringobject.put("quote_currency", obj.get("quote_currency").toString());
                 stringobject.put("min_quote", obj.get("base_min_size").toString());
                 stringobject.put("max_quote", obj.get("base_max_size").toString());
+
+                if(!listofpairs.contains(obj.get("id").toString())) {
+                    listofpairs.add(obj.get("id").toString());
+                }
                 listofobjects.add(stringobject);
-            }
+        }
+        coinbaseVariables.setProductPairs(listofpairs);
+        coinbaseVariables.setPRODUCTS(listofobjects);
+    }
+
+    public Map<String,List> getOrderBook(Integer level){
+        String URI = coinbaseVariables.getPROURI();
+        String pair = coinbaseVariables.getPAIRS();
+
+        publicAPI publicread = new publicAPI(URI, "/products/" + pair + "/book?level="+level);
+        JSONObject obj = publicread.getcallAPIObject();
+        System.out.println("top of new data for level "+level+"\n");
+        System.out.print(obj);
+        System.out.println("end of new data for level "+level+"\n");
+
+        List<Map<String,String>> arr = new ArrayList<Map<String,String>>();
+
+        JSONArray asks = obj.getJSONArray("asks");
+        JSONArray bids = obj.getJSONArray("bids");
+
+        List<Map<String,String>> ask_array = new ArrayList<Map<String,String>>();
+        List<Map<String,String>> bid_array = new ArrayList<Map<String,String>>();
+        for(int i=0;i<asks.length();i++){
+            JSONArray data = asks.getJSONArray(i);
+
+            Map<String,String> map = new HashMap<String,String>();
+
+            map.put("price",data.get(0).toString());
+            map.put("size",data.get(1).toString());
+            map.put("count",data.get(2).toString());
+            ask_array.add(map);
+        }
+
+        for(int q=0;q<bids.length();q++){
+            JSONArray data = bids.getJSONArray(q);
+
+            Map<String,String> map = new HashMap<String,String>();
+
+            map.put("price",data.get(0).toString());
+            map.put("size",data.get(1).toString());
+            map.put("count",data.get(2).toString());
+            bid_array.add(map);
 
         }
-        coinbaseVariables.setPRODUCTS(listofobjects);
+
+        Map<String,List> askmap = new HashMap<String,List>();
+        askmap.put("asks",ask_array);
+        askmap.put("bids",bid_array);
+
+return askmap;
+
     }
 
 

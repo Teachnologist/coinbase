@@ -51,6 +51,9 @@ System.out.print("base_currencies: "+base_currencies.toString()+"\n");
                     quoteobject.put("rate",rate);
                     String pair = b_currency+"-"+uppercase_quote;
                     quoteobject.put("pair",pair);
+
+                    String invpair = uppercase_quote+"-"+b_currency;
+                    quoteobject.put("invpair",invpair);
                     listofobject.put(quoteobject);
                 }
             }
@@ -107,6 +110,21 @@ System.out.print("base_currencies: "+base_currencies.toString()+"\n");
                         quoteobject.put("rate",rate);
                         String pair = b_currency+"-"+uppercase_quote;
                         quoteobject.put("pair",pair);
+
+                        String invpair = uppercase_quote+"-"+b_currency;
+                        quoteobject.put("invpair",invpair);
+
+                        String valid_pair = null;
+
+                        if(coinbaseVariables.isProductPair(pair)){
+
+                            valid_pair = pair;
+                        }else if(coinbaseVariables.isProductPair(invpair)){
+                            valid_pair = invpair;
+                        }
+
+                        quoteobject.put("validpair",valid_pair);
+
                         quoteobject.put(uppercase_quote, rate);
                         listofobject.add(quoteobject);
                     }

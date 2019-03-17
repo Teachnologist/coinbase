@@ -12,6 +12,7 @@ public class coinbaseVariables {
     private static List<Map<String,String>> PRODUCTS;
     private static List BASE_CURRENCIES;
     private static List QUOTE_CURRENCIES;
+    private static List PRODUCT_PAIRS;
 
     public static void setDOLLARTYPE(String CURRENCY) {
         coinbaseVariables.DOLLAR_TYPE = CURRENCY;
@@ -31,6 +32,24 @@ public class coinbaseVariables {
 
     public static void setQuoteCurrencies(List quoteCurrencies) {
         QUOTE_CURRENCIES = quoteCurrencies;
+    }
+
+    public static void setProductPairs(List productPairs) {
+        PRODUCT_PAIRS = productPairs;
+    }
+
+    public static List getProductPairs() {
+        return PRODUCT_PAIRS;
+    }
+
+    public static Boolean isProductPair(String pair){
+        Boolean truthy = false;
+
+        if(PRODUCT_PAIRS.contains(pair)){
+            truthy = true;
+        }
+
+        return truthy;
     }
 
     public static List getBaseCurrencies() {

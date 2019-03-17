@@ -54,7 +54,9 @@ public class RouterController {
         coinbaseVariables.setCBUri(URL);
         coinbaseVariables.setPROURI(PROURL);
 
+
         coinbaseProproducts cbpropublic = new coinbaseProproducts();
+        cbpropublic.setProductList();
         cbpropublic.setActiveproducts();
 
         coinbaseFreedata mod = new coinbaseFreedata();
@@ -112,6 +114,24 @@ public class RouterController {
         coinbaseVariables.setPAIRS(pairs);
 
 System.out.println("GOT IT!: "+pairs);
+    }
+
+    @RequestMapping(value = "/orders/level2/{pairs}")
+    public String orderL2Pairs(Model model, @PathVariable(value = "pairs", required=false) String pairs) {
+        System.out.println("\n....................................This should show....................................\n");
+        coinbaseVariables.setPAIRS(pairs);
+        coinbaseVariables.setCBUri(URL);
+        coinbaseVariables.setPROURI(PROURL);
+
+        coinbaseProproducts modela = new coinbaseProproducts();
+        System.out.println("Level 2");
+        System.out.print(modela.getOrderBook(2));
+        model.addAttribute("data",modela.getOrderBook(2));
+
+
+
+        System.out.println("GOT IT!: "+pairs);
+        return "orderlist";
     }
 
     @RequestMapping(value = "/server")
