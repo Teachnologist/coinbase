@@ -8,6 +8,40 @@
 <a th:href="${link}">Sign in to coinbase</a>
 
 <main class="mdl-layout__content">
+
+
+    <div  style="width:100%;">
+       Aggregate
+        <table border="1">
+            <head>
+                <th>ask_total</th>
+                <th>bid_total</th>
+                <th>ask_avg</th>
+                <th>bid_avg</th>
+                <th>ask_count/th>
+                <th>bid_count</th>
+                <th>ask_size</th>
+                <th>bid_size</th>
+            </head>
+            <tbody>
+            <tr>
+                <td th:text="${data.agg_map.ask_total}"></td>
+                <td  th:text="${data.agg_map.bid_total}"></td>
+                <td th:text="${data.agg_map.ask_avg}"></td>
+                <td  th:text="${data.agg_map.bid_avg}"></td>
+                <td th:text="${data.agg_map.ask_count}"></td>
+                <td  th:text="${data.agg_map.bid_count}"></td>
+                <td th:text="${data.agg_map.ask_size}"></td>
+                <td  th:text="${data.agg_map.bid_size}"></td>
+
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+=81.0, ask_total=332553.56, bid_count=52.0, bid_avg=4105.5996
     <div style="width:100%;display:inline-flex">
         <div  style="width:48%;">
             ASKS

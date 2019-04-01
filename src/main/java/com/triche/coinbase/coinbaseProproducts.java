@@ -80,7 +80,7 @@ public class coinbaseProproducts {
         coinbaseVariables.setPRODUCTS(listofobjects);
     }
 
-    public Map<String,List> getOrderBook(Integer level){
+    public Map<String,Object> getOrderBook(Integer level){
         String URI = coinbaseVariables.getPROURI();
         String pair = coinbaseVariables.getPAIRS();
 
@@ -97,10 +97,35 @@ public class coinbaseProproducts {
 
         List<Map<String,String>> ask_array = new ArrayList<Map<String,String>>();
         List<Map<String,String>> bid_array = new ArrayList<Map<String,String>>();
+
+        Float ask_size = 0.0f;
+        Float ask_avg = 0.0f;
+        Float ask_total = 0.0f;
+        Float ask_count = 0.0f;
+
+        Integer i_count = 0;
+
+        Float bid_size = 0.0f;
+        Float bid_avg = 0.0f;
+        Float bid_total= 0.0f;
+        Float bid_count = 0.0f;
+
+        Integer b_count = 0;
+
         for(int i=0;i<asks.length();i++){
+            i_count++;
             JSONArray data = asks.getJSONArray(i);
 
             Map<String,String> map = new HashMap<String,String>();
+
+
+            ask_size += Float.parseFloat(data.get(1).toString());
+            ask_count += Float.parseFloat(data.get(2).toString());
+            Float a = Float.parseFloat(data.get(0).toString());
+            Float b = Float.parseFloat(data.get(2).toString());
+
+            Float at = a*b;
+            ask_total += at;
 
             map.put("price",data.get(0).toString());
             map.put("size",data.get(1).toString());
@@ -108,10 +133,22 @@ public class coinbaseProproducts {
             ask_array.add(map);
         }
 
+        ask_avg =  ask_total/ask_count;
+
+
+
+
         for(int q=0;q<bids.length();q++){
             JSONArray data = bids.getJSONArray(q);
 
             Map<String,String> map = new HashMap<String,String>();
+
+            bid_size += Float.parseFloat(data.get(1).toString());
+            bid_count += Float.parseFloat(data.get(2).toString());
+
+            Float bt = Float.parseFloat(data.get(0).toString()) * Float.parseFloat(data.get(2).toString());
+            bid_total += bt;
+
 
             map.put("price",data.get(0).toString());
             map.put("size",data.get(1).toString());
@@ -120,11 +157,27 @@ public class coinbaseProproducts {
 
         }
 
-        Map<String,List> askmap = new HashMap<String,List>();
+        bid_avg =  ask_total/ask_count;
+
+        Map<String,Object> askmap = new HashMap<String,Object>();
         askmap.put("asks",ask_array);
         askmap.put("bids",bid_array);
 
-return askmap;
+        Map<String,Float> agg_map = new HashMap<String,Float>();
+        agg_map.put("ask_size",ask_size);
+        agg_map.put("ask_count",ask_count);
+        agg_map.put("ask_total",ask_total);
+        agg_map.put("ask_avg",ask_avg);
+
+        agg_map.put("bid_size",bid_size);
+        agg_map.put("bid_count",bid_count);
+        agg_map.put("bid_total",bid_total);
+        agg_map.put("bid_avg",bid_avg);
+
+        askmap.put("agg_map",agg_map);
+
+System.out.print(agg_map);
+        return askmap;
 
     }
 
