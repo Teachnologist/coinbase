@@ -157,13 +157,131 @@ public class coinbaseProproducts {
 
         }
 
-        bid_avg =  ask_total/ask_count;
+        bid_avg =  bid_total/bid_count;
 
         Map<String,Object> askmap = new HashMap<String,Object>();
         askmap.put("asks",ask_array);
         askmap.put("bids",bid_array);
 
-        Map<String,Float> agg_map = new HashMap<String,Float>();
+        Map<String,Object> agg_map = new HashMap<String,Object>();
+        agg_map.put("ask_size",ask_size);
+        agg_map.put("ask_count",ask_count);
+        agg_map.put("ask_total",ask_total);
+        agg_map.put("ask_avg",ask_avg);
+
+        agg_map.put("bid_size",bid_size);
+        agg_map.put("bid_count",bid_count);
+        agg_map.put("bid_total",bid_total);
+        agg_map.put("bid_avg",bid_avg);
+        Float ask_percentage = ask_size / (ask_size+bid_size);
+        Float ask_percentage_formatted = ask_percentage*100;
+        Float bid_percentage_formatted = 100-ask_percentage_formatted;
+
+        String bid_color = "green";
+
+        if(bid_percentage_formatted > 40 && bid_percentage_formatted < 60){
+            bid_color = "orange";
+        }else if(bid_percentage_formatted < 40){
+            bid_color = "red";
+        }
+
+        agg_map.put("bid_color",bid_color);
+        agg_map.put("ask_percentage",ask_percentage);
+        agg_map.put("ask_percentage_formatted",ask_percentage_formatted);
+        agg_map.put("bid_percentage_formatted",bid_percentage_formatted);
+
+
+        askmap.put("agg_map",agg_map);
+
+System.out.print(agg_map);
+        return askmap;
+
+    }
+
+    public JSONObject getOrderBookUNPROCESSED(Integer level){
+        java.lang.String URI = coinbaseVariables.getPROURI();
+        java.lang.String pair = coinbaseVariables.getPAIRS();
+
+        publicAPI publicread = new publicAPI(URI, "/products/" + pair + "/book?level="+level);
+        JSONObject obj = publicread.getcallAPIObject();
+        System.out.println("top of new data for level "+level+"\n");
+        System.out.print(obj);
+        System.out.println("end of new data for level "+level+"\n");
+
+        List<Map<java.lang.String, java.lang.String>> arr = new ArrayList<Map<java.lang.String, java.lang.String>>();
+
+        JSONArray asks = obj.getJSONArray("asks");
+        JSONArray bids = obj.getJSONArray("bids");
+
+        JSONArray ask_array = new JSONArray();
+        JSONArray bid_array = new JSONArray();
+
+        Float ask_size = 0.0f;
+        Float ask_avg = 0.0f;
+        Float ask_total = 0.0f;
+        Float ask_count = 0.0f;
+
+        Integer i_count = 0;
+
+        Float bid_size = 0.0f;
+        Float bid_avg = 0.0f;
+        Float bid_total= 0.0f;
+        Float bid_count = 0.0f;
+
+        Integer b_count = 0;
+
+        for(int i=0;i<asks.length();i++){
+            i_count++;
+            JSONArray data = asks.getJSONArray(i);
+
+            JSONObject json_object = new JSONObject();
+
+
+            ask_size += Float.parseFloat(data.get(1).toString());
+            ask_count += Float.parseFloat(data.get(2).toString());
+            Float a = Float.parseFloat(data.get(0).toString());
+            Float b = Float.parseFloat(data.get(2).toString());
+
+            Float at = a*b;
+            ask_total += at;
+
+            json_object.put("price",data.get(0).toString());
+            json_object.put("size",data.get(1).toString());
+            json_object.put("count",data.get(2).toString());
+            ask_array.put(json_object);
+        }
+
+        ask_avg =  ask_total/ask_count;
+
+
+
+
+        for(int q=0;q<bids.length();q++){
+            JSONArray data = bids.getJSONArray(q);
+
+            JSONObject json_object = new JSONObject();
+
+            bid_size += Float.parseFloat(data.get(1).toString());
+            bid_count += Float.parseFloat(data.get(2).toString());
+
+            Float bt = Float.parseFloat(data.get(0).toString()) * Float.parseFloat(data.get(2).toString());
+            bid_total += bt;
+
+
+            json_object.put("price",data.get(0).toString());
+            json_object.put("size",data.get(1).toString());
+            json_object.put("count",data.get(2).toString());
+            bid_array.put(json_object);
+
+        }
+
+        bid_avg =  bid_total/bid_count;
+
+        JSONObject askmap = new JSONObject();
+        askmap.put("asks",ask_array);
+        askmap.put("bids",bid_array);
+
+        JSONObject agg_map = new JSONObject();
         agg_map.put("ask_size",ask_size);
         agg_map.put("ask_count",ask_count);
         agg_map.put("ask_total",ask_total);
@@ -174,9 +292,25 @@ public class coinbaseProproducts {
         agg_map.put("bid_total",bid_total);
         agg_map.put("bid_avg",bid_avg);
 
+        Float ask_percentage = ask_size / (ask_size+bid_size);
+        Float ask_percentage_formatted = ask_percentage*100;
+        Float bid_percentage_formatted = 100-ask_percentage_formatted;
+        String bid_color = "green";
+
+        if(bid_percentage_formatted > 40 && bid_percentage_formatted < 60){
+            bid_color = "orange";
+        }else if(bid_percentage_formatted < 40){
+            bid_color = "red";
+        }
+
+        agg_map.put("bid_color",bid_color);
+        agg_map.put("ask_percentage",ask_percentage);
+        agg_map.put("ask_percentage_formatted",ask_percentage_formatted);
+        agg_map.put("bid_percentage_formatted",bid_percentage_formatted);
+
         askmap.put("agg_map",agg_map);
 
-System.out.print(agg_map);
+        System.out.print(agg_map);
         return askmap;
 
     }

@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/heading :: heading">
+<body>
+
+<div th:fragment="showOrders (aggregate_map,asks,bids)" >
+    <div  class="custom-jumbotron" style="width:100%;     height: 40px; display:inline-flex; background-color:whitesmoke; position:relative;">
+
+        <div id="aggsize_grid" th:style="|width:${aggregate_map.bid_percentage_formatted}%; height:100%;background-color:${aggregate_map.bid_color};position:relative; text-align:center; color:white;|" th:text="|${aggregate_map.ask_percentage_formatted}%|"></div>
+
+        <div class="title-text" style="height:100%;position:absolute;z-index:98;top:0; left:0;width:50%; border-right:solid; text-align:left;">SELL</div>
+        <div class="title-text" style="height:100%;position:absolute;z-index:98;top:0; right:0;width:50%; border-left:solid; text-align:right;">BUY</div>
+    </div>
+
+
+
+<div  class="custom-jumbotron">
+    <table class="mdl-data-table mdl-js-data-table fixed-table">
+        <head>
+            <th>ask_total</th>
+            <th>bid_total</th>
+            <th>ask_avg</th>
+            <th>bid_avg</th>
+            <th>ask_count</th>
+            <th>bid_count</th>
+            <th>ask_size</th>
+            <th>bid_size</th>
+        </head>
+        <tbody id="aggregate_body">
+        <tr>
+            <td id="ask_total" th:text="${aggregate_map.ask_total}"></td>
+            <td  id="bid_total"  th:text="${aggregate_map.bid_total}"></td>
+            <td id="ask_avg"  th:text="${aggregate_map.ask_avg}"></td>
+            <td  id="bid_avg"  th:text="${aggregate_map.bid_avg}"></td>
+            <td id="ask_count"  th:text="${aggregate_map.ask_count}"></td>
+            <td  id="bid_count" th:text="${aggregate_map.bid_count}"></td>
+            <td id="ask_size" th:text="${aggregate_map.ask_size}"></td>
+            <td  id="bid_size" th:text="${aggregate_map.bid_size}"></td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<div style="width:100%;display:inline-flex">
+    <div  style="width:48%;" class="center-items">
+        <p class="title-text">ASKS</p>
+        <table class="mdl-data-table mdl-js-data-table fixed-table">
+            <head>
+                <th>Price</th>
+                <th>Size</th>
+                <th>Count</th>
+            </head>
+            <tbody id="asks_body">
+            <tr th:each="ask:${asks}">
+                <td th:text="${ask.price}"></td>
+                <td th:text="${ask.size}"></td>
+                <td th:text="${ask.count}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div  style="width:48%;" class="center-items">
+        <p class="title-text">BIDS</p>
+        <table class="mdl-data-table mdl-js-data-table fixed-table">
+            <head>
+                <th>Price</th>
+                <th>Size</th>
+                <th>Count</th>
+            </head>
+            <tbody id="bids_body">
+            <tr th:each="bid:${bids}">
+                <td th:text="${bid.price}"></td>
+                <td th:text="${bid.size}"></td>
+                <td th:text="${bid.count}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+</div>
+    <script type="text/javascript">
+        if (!!window.EventSource) {
+            console.log("Event source available");
+
+            var source = new EventSource('/sse/orders');
+
+            source.addEventListener('message', function(e) {
+                console.log("order data");
+                console.dir(e.data);
+                editTableData(e.data);
+
+            });
+
+            source.addEventListener('open', function(e) {
+                console.log("Connection was opened.");
+            }, false);
+
+            source.addEventListener('error', function(e) {
+                if (e.readyState == EventSource.CLOSED) {
+                    console.dir(e);
+                    console.log("Connection was closed.");
+                } else {
+                    console.log(e.readyState);
+                }
+            }, false);
+        } else {
+            console.log("No SSE available");
+        }
+
+        function createTableRow(price,size,count){
+            var html = "<tr><td>"+price+"</td><td>"+size+"</td><td>"+count+"</td></tr>";
+            return html;
+
+        }
+
+        function displayAggregate(data){
+
+            var ask_total = document.getElementById("ask_total");
+            var bid_total = document.getElementById("bid_total");
+            var ask_avg = document.getElementById("ask_avg");
+            var bid_avg = document.getElementById("bid_avg");
+            var ask_count = document.getElementById("ask_count");
+            var bid_count = document.getElementById("bid_count");
+            var ask_size = document.getElementById("ask_size");
+            var bid_size = document.getElementById("bid_size");
+
+            var aggsize_grid = document.getElementById("aggsize_grid");
+
+            aggsize_grid.style.width = data.bid_percentage_formatted+"%";
+            aggsize_grid.innerHTML = data.bid_percentage_formatted+"%";
+            aggsize_grid.style.backgroundColor = data.bid_color;
+            ask_total.innerHTML = data.ask_total;
+            bid_total.innerHTML = data.bid_total;
+            ask_avg.innerHTML = data.ask_avg;
+            bid_avg.innerHTML = data.bid_avg;
+            ask_count.innerHTML = data.ask_count;
+            bid_count.innerHTML = data.bid_count;
+            ask_size.innerHTML = data.ask_size;
+            bid_size.innerHTML = data.bid_size;
+        }
+
+
+        function displayBidAsks(data,parent_element_id){
+            var html = "";
+
+            for(var i=0;i<data.length;i++){
+                html += createTableRow(data[i].price,data[i].size,data[i].count);
+            }
+
+            var parent_element = document.getElementById(parent_element_id);
+
+            parent_element.innerHTML = html;
+        }
+
+        function editTableData(input){
+            var html = "";
+            var data = JSON.parse(input);
+            displayAggregate(data.agg_map);
+            displayBidAsks(data.bids,"bids_body");
+            displayBidAsks(data.asks,"asks_body");
+
+        }
+
+    </script>
+
+</div>
+
+</body>
+</html>

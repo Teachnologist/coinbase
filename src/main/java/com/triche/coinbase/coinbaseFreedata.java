@@ -29,42 +29,44 @@ System.out.print("base_currencies: "+base_currencies.toString()+"\n");
 
         for(int i = 0;i<quote_currencies.size();i++) {
             String b_currency = quote_currencies.get(i).toString().toUpperCase();
-            String endpoint = "/exchange-rates?currency="+b_currency;
-            publicAPI publicread = new publicAPI(URL, endpoint);
-            JSONObject obj = publicread.getcallAPIObject();
+            if (!base_currencies.contains(b_currency)) {
+                String endpoint = "/exchange-rates?currency=" + b_currency;
+                publicAPI publicread = new publicAPI(URL, endpoint);
+                JSONObject obj = publicread.getcallAPIObject();
 
-            JSONObject data = obj.getJSONObject("data");
-            JSONObject rates = data.getJSONObject("rates");
+                JSONObject data = obj.getJSONObject("data");
+                JSONObject rates = data.getJSONObject("rates");
 
-            JSONArray listofobject = new JSONArray();
-            JSONObject bigobject = new JSONObject();
-            for (int q = 0; q < base_currencies.size(); q++) {
-                JSONObject quoteobject = new JSONObject();
+                JSONArray listofobject = new JSONArray();
+                JSONObject bigobject = new JSONObject();
+                for (int q = 0; q < base_currencies.size(); q++) {
+                    JSONObject quoteobject = new JSONObject();
 
-                String uppercase_quote = base_currencies.get(q).toString().toUpperCase();
+                    String uppercase_quote = base_currencies.get(q).toString().toUpperCase();
 
-                if(rates.has(uppercase_quote)){
-                    String rate = rates.get(uppercase_quote).toString();
-                if (rate != null) {
+                    if (rates.has(uppercase_quote)) {
+                        String rate = rates.get(uppercase_quote).toString();
+                        if (rate != null) {
 
-                    quoteobject.put("quote",uppercase_quote);
-                    quoteobject.put("rate",rate);
-                    String pair = b_currency+"-"+uppercase_quote;
-                    quoteobject.put("pair",pair);
+                            quoteobject.put("quote", uppercase_quote);
+                            quoteobject.put("rate", rate);
+                            String pair = b_currency + "-" + uppercase_quote;
+                            quoteobject.put("pair", pair);
 
-                    String invpair = uppercase_quote+"-"+b_currency;
-                    quoteobject.put("invpair",invpair);
-                    listofobject.put(quoteobject);
+                            String invpair = uppercase_quote + "-" + b_currency;
+                            quoteobject.put("invpair", invpair);
+                            listofobject.put(quoteobject);
+                        }
+                    }
+                    //[{BTC:{USD:100,EUR:200,...    }]
                 }
+                bigobject.put("key", b_currency);
+                Date date = new Date();
+                bigobject.put("date", date.toString());
+                bigobject.put("milliseconds", date.getTime());
+                bigobject.put("values", listofobject);
+                arr.put(bigobject);
             }
-                //[{BTC:{USD:100,EUR:200,...    }]
-            }
-            bigobject.put("key",b_currency);
-            Date date = new Date();
-            bigobject.put("date",date.toString());
-            bigobject.put("milliseconds",date.getTime());
-            bigobject.put("values",listofobject);
-            arr.put(bigobject);
         }
 
         System.out.println("Complete..."+"\n");
@@ -89,53 +91,55 @@ System.out.print("base_currencies: "+base_currencies.toString()+"\n");
 
         for(int i = 0;i<quote_currencies.size();i++) {
             String b_currency = quote_currencies.get(i).toString().toUpperCase();
-            String endpoint = "/exchange-rates?currency="+b_currency;
-            publicAPI publicread = new publicAPI(URL, endpoint);
-            JSONObject obj = publicread.getcallAPIObject();
+            if (!base_currencies.contains(b_currency)) {
+                String endpoint = "/exchange-rates?currency=" + b_currency;
+                publicAPI publicread = new publicAPI(URL, endpoint);
+                JSONObject obj = publicread.getcallAPIObject();
 
-            JSONObject data = obj.getJSONObject("data");
-            JSONObject rates = data.getJSONObject("rates");
+                JSONObject data = obj.getJSONObject("data");
+                JSONObject rates = data.getJSONObject("rates");
 
-            List<Map<String,String>> listofobject = new ArrayList<Map<String,String>>();
-            Map<String,Object> bigobject = new HashMap<String,Object>();
-            for (int q = 0; q < base_currencies.size(); q++) {
-                Map<String,String> quoteobject = new HashMap<String,String>();
+                List<Map<String, String>> listofobject = new ArrayList<Map<String, String>>();
+                Map<String, Object> bigobject = new HashMap<String, Object>();
+                for (int q = 0; q < base_currencies.size(); q++) {
+                    Map<String, String> quoteobject = new HashMap<String, String>();
 
-                String uppercase_quote = base_currencies.get(q).toString().toUpperCase();
+                    String uppercase_quote = base_currencies.get(q).toString().toUpperCase();
 
-                if(rates.has(uppercase_quote)){
-                    String rate = rates.get(uppercase_quote).toString();
-                    if (rate != null) {
-                        quoteobject.put("quote",uppercase_quote);
-                        quoteobject.put("rate",rate);
-                        String pair = b_currency+"-"+uppercase_quote;
-                        quoteobject.put("pair",pair);
+                    if (rates.has(uppercase_quote)) {
+                        String rate = rates.get(uppercase_quote).toString();
+                        if (rate != null) {
+                            quoteobject.put("quote", uppercase_quote);
+                            quoteobject.put("rate", rate);
+                            String pair = b_currency + "-" + uppercase_quote;
+                            quoteobject.put("pair", pair);
 
-                        String invpair = uppercase_quote+"-"+b_currency;
-                        quoteobject.put("invpair",invpair);
+                            String invpair = uppercase_quote + "-" + b_currency;
+                            quoteobject.put("invpair", invpair);
 
-                        String valid_pair = null;
+                            String valid_pair = null;
 
-                        if(coinbaseVariables.isProductPair(pair)){
+                            if (coinbaseVariables.isProductPair(pair)) {
 
-                            valid_pair = pair;
-                        }else if(coinbaseVariables.isProductPair(invpair)){
-                            valid_pair = invpair;
+                                valid_pair = pair;
+                            } else if (coinbaseVariables.isProductPair(invpair)) {
+                                valid_pair = invpair;
+                            }
+
+                            quoteobject.put("validpair", valid_pair);
+
+                            quoteobject.put(uppercase_quote, rate);
+                            listofobject.add(quoteobject);
                         }
-
-                        quoteobject.put("validpair",valid_pair);
-
-                        quoteobject.put(uppercase_quote, rate);
-                        listofobject.add(quoteobject);
                     }
+                    //[{BTC:{USD:100,EUR:200,...    }]
                 }
-                //[{BTC:{USD:100,EUR:200,...    }]
+                bigobject.put("key", b_currency);
+                String date = new Date().toString();
+                bigobject.put("date", date);
+                bigobject.put("values", listofobject);
+                arr.add(bigobject);
             }
-            bigobject.put("key",b_currency);
-            String date = new Date().toString();
-            bigobject.put("date",date);
-            bigobject.put("values",listofobject);
-            arr.add(bigobject);
         }
 
         System.out.println("Complete..."+"\n");

@@ -59,12 +59,12 @@
 if (!!window.EventSource) {
 console.log("Event source available");
 
-var source = new EventSource('/pro/products/level1');
+var source = new EventSource('/sse/orders');
 
 source.addEventListener('message', function(e) {
-    console.log("message");
+    console.log("order data");
     console.dir(e.data);
-    editTableData(e.data);
+    /*editTableData(e.data);*/
 
 });
 

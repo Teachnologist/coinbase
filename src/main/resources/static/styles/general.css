@@ -6,3 +6,64 @@
 .manteka{
     font-family: Manteka,sans-serif;
 }
+
+
+@media all and (min-width: 480px) {
+    .custom-jumbotron {
+        min-width:360px;
+        width:90%;
+        display: inline-flex;
+        border-style:solid;
+        border-width: thin;
+        border-color:lightgray;
+        align-items: center;
+    }
+
+    .inner-width {
+        width:50%;
+    }
+
+    .custom-card{
+        min-width:360px;
+        width:100%;
+        border-style:solid;
+
+    }
+
+
+}
+
+.title-text{
+    font-family: Manteka,"sans-serif";
+    color: grey;
+}
+
+.fixed-table {
+    width:100%;
+    margin: 0 auto;
+    table-layout: fixed;
+}
+
+.p-text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    overflow: hidden
+}
+
+.inner-width {
+    width:100%;
+}
+
+.custom-jumbotron{
+    width:100%;
+    border-style:solid;
+    border-width: thin;
+    border-color:lightgray;
+
+}
+
+.center-item {
+    margin: 0 auto !important;
+    text-align: center;
+}
