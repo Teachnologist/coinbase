@@ -18,7 +18,7 @@ public class sseOrderBook {
             method= RequestMethod.GET,
             produces="text/event-stream;charset=UTF-8")
     public @ResponseBody
-    String sendMessage(HttpServletResponse response) {
+    String sendOrders(HttpServletResponse response) {
         response.setContentType("text/event-stream");
         response.setCharacterEncoding("UTF-8");
 
@@ -32,6 +32,29 @@ public class sseOrderBook {
          //   System.out.print(returned);
             System.out.println("sse out");
             return "data: " + proData.getOrderBookUNPROCESSED(2) + "\n\n";
+        }catch(Exception e){
+            return "data: " +e.toString();
+        }
+    }
+
+    @RequestMapping(value="/trades",
+            method= RequestMethod.GET,
+            produces="text/event-stream;charset=UTF-8")
+    public @ResponseBody
+    String sendTrades(HttpServletResponse response) {
+        response.setContentType("text/event-stream");
+        response.setCharacterEncoding("UTF-8");
+
+        response.setHeader("Content-Type","text/event-stream;charset=UTF-8");
+
+        try {
+            Thread.sleep(3000);
+            coinbaseProproducts proData = new coinbaseProproducts();
+            //   JSONObject returned = new JSONObject(freeData.getAllProductConversions().toString());
+            System.out.println("sse in");
+            //   System.out.print(returned);
+            System.out.println("sse out");
+            return "data: " + proData.getTradeBookJSON() + "\n\n";
         }catch(Exception e){
             return "data: " +e.toString();
         }

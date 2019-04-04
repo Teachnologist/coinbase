@@ -127,8 +127,7 @@ System.out.println("GOT IT!: "+pairs);
         System.out.println("Level 2");
         System.out.print(modela.getOrderBook(2));
         model.addAttribute("data",modela.getOrderBook(2));
-
-
+        model.addAttribute("trades",modela.getTradeBook());
 
         System.out.println("GOT IT!: "+pairs);
         return "orderlist";

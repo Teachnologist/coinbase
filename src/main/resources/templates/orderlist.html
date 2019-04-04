@@ -16,7 +16,9 @@
     <div th:replace="fragments/public/orders :: showOrders (aggregate_map=${data.agg_map},asks=${data.asks},bids=${data.bids})"></div>
     </div>
 
-    <div class="mdl-tabs__panel" id="trades-panel">Trades</div>
+    <div class="mdl-tabs__panel" id="trades-panel">
+        <div th:replace="fragments/public/trades :: showTrades (buys=${trades.buys},sells=${trades.sells},aggregate=${trades.aggregate})"></div>
+    </div>
 
 </main>
 </body>

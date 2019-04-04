@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/heading :: heading">
+<body>
+
+<div th:fragment="showTrades(buys,sells,aggregate)" >
+
+
+
+
+    <div  class="custom-jumbotron">
+        <table class="mdl-data-table mdl-js-data-table fixed-table">
+            <head>
+                <th>total_sell</th>
+                <th>sell_size</th>
+                <th>avg_sell</th>
+                <th>avg_ssize</th>
+                <th>sell_count</th>
+                <th>last_sell</th>
+            </head>
+            <tbody id="aggregate_sell">
+            <tr>
+                <td id="total_sell" th:text="${aggregate.total_sell}"></td>
+                <td  id="sell_size"  th:text="${aggregate.sell_size}"></td>
+                <td id="avg_sell"  th:text="${aggregate.avg_sell}"></td>
+                <td  id="avg_ssize"  th:text="${aggregate.avg_ssize}"></td>
+                <td id="sell_count"  th:text="${aggregate.sell_count}"></td>
+                <td  id="last_sell" th:text="${aggregate.last_sell}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <table class="mdl-data-table mdl-js-data-table fixed-table">
+            <head>
+                <th>total_buy</th>
+                <th>buy_size</th>
+                <th>avg_buy</th>
+                <th>avg_bsize</th>
+                <th>buy_count</th>
+                <th>avg_spread</th>
+                <th>last_buy</th>
+            </head>
+            <tbody id="aggregate_buy">
+            <tr>
+                <td id="total_buy" th:text="${aggregate.total_buy}"></td>
+                <td  id="buy_size"  th:text="${aggregate.buy_size}"></td>
+                <td id="avg_buy"  th:text="${aggregate.avg_buy}"></td>
+                <td  id="avg_bsize"  th:text="${aggregate.avg_bsize}"></td>
+                <td id="buy_count"  th:text="${aggregate.buy_count}"></td>
+                <td  id="avg_spread" th:text="${aggregate.avg_spread}"></td>
+                <td  id="last_buy" th:text="${aggregate.last_buy}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div style="width:100%;display:inline-flex">
+        <div  style="width:48%;" class="center-items">
+            <p class="title-text">SELLS</p>
+            <table class="mdl-data-table mdl-js-data-table fixed-table">
+                <head>
+                    <th>Price</th>
+                    <th>Size</th>
+                    <th>Time</th>
+                </head>
+                <tbody id="sell_body">
+                <tr th:each="sell:${sells}">
+                    <td th:text="${sell.price}"></td>
+                    <td th:text="${sell.size}"></td>
+                    <td th:text="${sell.time}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div  style="width:48%;" class="center-items">
+            <p class="title-text">BUYS</p>
+            <table class="mdl-data-table mdl-js-data-table fixed-table">
+                <head>
+                    <th>Price</th>
+                    <th>Size</th>
+                    <th>Time</th>
+                </head>
+                <tbody id="buy_body">
+                <tr th:each="buy:${buys}">
+                    <td th:text="${buy.price}"></td>
+                    <td th:text="${buy.size}"></td>
+                    <td th:text="${buy.time}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+
+
+</div>
+    <script type="text/javascript">
+        if (!!window.EventSource) {
+            console.log("Event source available");
+
+            var source = new EventSource('/sse/trades');
+
+            source.addEventListener('message', function(e) {
+                console.log("order data");
+                console.dir(e.data);
+                editTableData(e.data);
+
+            });
+
+            source.addEventListener('open', function(e) {
+                console.log("Connection was opened.");
+            }, false);
+
+            source.addEventListener('error', function(e) {
+                if (e.readyState == EventSource.CLOSED) {
+                    console.dir(e);
+                    console.log("Connection was closed.");
+                } else {
+                    console.log(e.readyState);
+                }
+            }, false);
+        } else {
+            console.log("No SSE available");
+        }
+
+        function createTableRow(price,size,count){
+            var html = "<tr><td>"+price+"</td><td>"+size+"</td><td>"+count+"</td></tr>";
+            return html;
+
+        }
+
+        function displayAggregate(data){
+
+
+            var total_sell = document.getElementById("total_sell");
+            var total_buy = document.getElementById("total_buy");
+            var sell_size = document.getElementById("sell_size");
+            var buy_size = document.getElementById("buy_size");
+            var buy_count = document.getElementById("buy_count");
+            var last_buy = document.getElementById("last_buy");
+
+
+            var avg_spread = document.getElementById("avg_spread");
+            var avg_sell = document.getElementById("avg_sell");
+            var avg_buy = document.getElementById("avg_buy");
+
+            var avg_ssize = document.getElementById("avg_ssize");
+            var avg_bsize = document.getElementById("avg_bsize");
+            var sell_count = document.getElementById("sell_count");
+            var last_sell = document.getElementById("last_sell");
+
+            total_sell.innerHTML = data.total_sell;
+            total_buy.innerHTML = data.total_buy;
+            sell_size.innerHTML = data.sell_size;
+            buy_size.innerHTML = data.buy_size;
+            buy_count.innerHTML = data.buy_count;
+            last_buy.innerHTML = data.last_buy;
+            avg_spread.innerHTML = data.avg_spread;
+            avg_sell.innerHTML = data.avg_sell;
+
+            avg_buy.innerHTML = data.avg_buy;
+            avg_sell.innerHTML = data.avg_sell;
+            avg_ssize.innerHTML = data.avg_ssize;
+            avg_bsize.innerHTML = data.avg_bsize;
+            sell_count.innerHTML = data.sell_count;
+            last_sell.innerHTML = data.last_sell;
+        }
+
+
+        function displayBidAsks(data,parent_element_id){
+            var html = "";
+
+            for(var i=0;i<data.length;i++){
+                html += createTableRow(data[i].price,data[i].size,data[i].time);
+            }
+
+            var parent_element = document.getElementById(parent_element_id);
+
+            parent_element.innerHTML = html;
+        }
+
+        function editTableData(input){
+            var html = "";
+            var data = JSON.parse(input);
+            console.log("table data");
+            console.dir(data);
+            displayAggregate(data.aggregate);
+            displayBidAsks(data.buys,"buy_body");
+            displayBidAsks(data.sells,"sell_body");
+
+        }
+
+    </script>
+
+</div>
+
+</body>
+</html>

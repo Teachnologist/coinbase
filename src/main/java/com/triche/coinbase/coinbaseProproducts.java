@@ -80,6 +80,208 @@ public class coinbaseProproducts {
         coinbaseVariables.setPRODUCTS(listofobjects);
     }
 
+    public JSONObject getTradeBookJSON(){
+
+        String URI = coinbaseVariables.getPROURI();
+        String pair = coinbaseVariables.getPAIRS();
+
+        publicAPI publicread = new publicAPI(URI, "/products/"+pair+"/trades");
+        JSONArray json_arr = publicread.getprocallAPIArray();
+        System.out.println("TRADE BOOK: ");
+        JSONArray sells = new JSONArray();
+        JSONArray buys = new JSONArray();
+
+        Integer sell_count = 0;
+        Integer buy_count = 0;
+        Float total_sell = 0.0f;
+        Float total_buy = 0.0f;
+        Float sell_size = 0.0f;
+        Float buy_size = 0.0f;
+        Float avg_sell = 0.0f;
+        Float avg_buy = 0.0f;
+        Float avg_ssize = 0.0f;
+        Float avg_bsize = 0.0f;
+        Float last_sell = 0.0f;
+        Float last_buy = 0.0f;
+
+        for(int i=0;i<json_arr.length();i++){
+            System.out.println(i+": "+json_arr.get(i).toString());
+            System.out.println(i+": "+json_arr.getJSONObject(i).get("price"));
+            JSONObject obj = json_arr.getJSONObject(i);
+
+            String side = obj.get("side").toString();
+            String size = obj.get("size").toString();
+            String price = obj.get("price").toString();
+            String time = obj.get("time").toString();
+
+            switch(side){
+                case "sell":
+                    if(last_sell == 0.0) {
+                        last_sell = Float.parseFloat(price);
+                    }
+                    sell_count++;
+                    total_sell += Float.parseFloat(price);
+                    sell_size += Float.parseFloat(size);
+                    JSONObject sell = new JSONObject();
+                    sell.put("side",side);
+                    sell.put("size",size);
+                    sell.put("price",price);
+                    sell.put("time",time);
+                    sells.put(sell);
+                    break;
+                case "buy":
+                    if(last_buy == 0.0) {
+                        last_buy = Float.parseFloat(price);
+                    }
+                    buy_count++;
+                    total_buy += Float.parseFloat(price);
+                    buy_size += Float.parseFloat(size);
+                    JSONObject buy = new JSONObject();
+                    buy.put("side",side);
+                    buy.put("size",size);
+                    buy.put("price",price);
+                    buy.put("time",time);
+                    buys.put(buy);
+                    break;
+                default:
+                    break;
+
+            }
+        }
+
+        avg_sell = total_sell/sell_count;
+        avg_buy = total_buy/buy_count;
+        avg_ssize = sell_size/sell_count;
+        avg_bsize = buy_size/buy_count;
+
+        Float avg_spread = avg_ssize - avg_bsize;
+
+
+        JSONObject aggregate = new JSONObject();
+        aggregate.put("total_sell",total_sell);
+        aggregate.put("total_buy",total_buy);
+        aggregate.put("sell_size",sell_size);
+        aggregate.put("buy_size",buy_size);
+        aggregate.put("buy_count",buy_count);
+        aggregate.put("last_buy",last_buy);
+
+        aggregate.put("avg_sell",avg_sell);
+        aggregate.put("avg_buy",avg_buy);
+        aggregate.put("avg_ssize",avg_ssize);
+        aggregate.put("avg_bsize",avg_bsize);
+        aggregate.put("sell_count",sell_count);
+        aggregate.put("last_sell",last_sell);
+        aggregate.put("avg_spread",avg_spread);
+
+        JSONObject trade_map = new JSONObject();
+        trade_map.put("sells",sells);
+        trade_map.put("buys",buys);
+        trade_map.put("aggregate",aggregate);
+
+        return trade_map;
+    }
+
+    public Map<String,Object> getTradeBook(){
+
+        String URI = coinbaseVariables.getPROURI();
+        String pair = coinbaseVariables.getPAIRS();
+
+        publicAPI publicread = new publicAPI(URI, "/products/"+pair+"/trades");
+        JSONArray json_arr = publicread.getprocallAPIArray();
+        System.out.println("TRADE BOOK: ");
+        List<Map<String,String>> sells = new ArrayList<Map<String,String>>();
+        List<Map<String,String>> buys = new ArrayList<Map<String,String>>();
+
+        Integer sell_count = 0;
+        Integer buy_count = 0;
+        Float total_sell = 0.0f;
+        Float total_buy = 0.0f;
+        Float sell_size = 0.0f;
+        Float buy_size = 0.0f;
+        Float avg_sell = 0.0f;
+        Float avg_buy = 0.0f;
+        Float avg_ssize = 0.0f;
+        Float avg_bsize = 0.0f;
+        Float last_sell = 0.0f;
+        Float last_buy = 0.0f;
+
+        for(int i=0;i<json_arr.length();i++){
+            System.out.println(i+": "+json_arr.get(i).toString());
+            System.out.println(i+": "+json_arr.getJSONObject(i).get("price"));
+            JSONObject obj = json_arr.getJSONObject(i);
+
+            String side = obj.get("side").toString();
+            String size = obj.get("size").toString();
+            String price = obj.get("price").toString();
+            String time = obj.get("time").toString();
+
+            switch(side){
+                case "sell":
+                    if(last_sell == 0.0) {
+                        last_sell = Float.parseFloat(price);
+                    }
+                    sell_count++;
+                    total_sell += Float.parseFloat(price);
+                    sell_size += Float.parseFloat(size);
+                    Map<String,String> sell = new HashMap<String,String>();
+                    sell.put("side",side);
+                    sell.put("size",size);
+                    sell.put("price",price);
+                    sell.put("time",time);
+                    sells.add(sell);
+                    break;
+                case "buy":
+                    if(last_buy == 0.0) {
+                        last_buy = Float.parseFloat(price);
+                    }
+                    buy_count++;
+                    total_buy += Float.parseFloat(price);
+                    buy_size += Float.parseFloat(size);
+                    Map<String,String> buy = new HashMap<String,String>();
+                    buy.put("side",side);
+                    buy.put("size",size);
+                    buy.put("price",price);
+                    buy.put("time",time);
+                    buys.add(buy);
+                    break;
+                default:
+                    break;
+
+            }
+        }
+
+        avg_sell = total_sell/sell_count;
+        avg_buy = total_buy/buy_count;
+        avg_ssize = sell_size/sell_count;
+        avg_bsize = buy_size/buy_count;
+
+        Float avg_spread = avg_ssize - avg_bsize;
+
+
+        Map<String,Object> aggregate = new HashMap<String,Object>();
+        aggregate.put("total_sell",total_sell);
+        aggregate.put("total_buy",total_buy);
+        aggregate.put("sell_size",sell_size);
+        aggregate.put("buy_size",buy_size);
+        aggregate.put("buy_count",buy_count);
+        aggregate.put("last_buy",last_buy);
+
+        aggregate.put("avg_sell",avg_sell);
+        aggregate.put("avg_buy",avg_buy);
+        aggregate.put("avg_ssize",avg_ssize);
+        aggregate.put("avg_bsize",avg_bsize);
+        aggregate.put("sell_count",sell_count);
+        aggregate.put("last_sell",last_sell);
+        aggregate.put("avg_spread",avg_spread);
+
+        Map<String,Object> trade_map = new HashMap<String,Object>();
+        trade_map.put("sells",sells);
+        trade_map.put("buys",buys);
+        trade_map.put("aggregate",aggregate);
+
+        return trade_map;
+    }
+
     public Map<String,Object> getOrderBook(Integer level){
         String URI = coinbaseVariables.getPROURI();
         String pair = coinbaseVariables.getPAIRS();
