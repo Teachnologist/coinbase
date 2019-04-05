@@ -313,6 +313,10 @@ public class coinbaseProproducts {
         Float bid_count = 0.0f;
 
         Integer b_count = 0;
+        JSONArray ask_data = asks.getJSONArray(0);
+        JSONArray bid_data = bids.getJSONArray(0);
+
+        coinbaseTrends.addBestOrder(Float.parseFloat(ask_data.get(0).toString()),Float.parseFloat(bid_data.get(0).toString()));
 
         for(int i=0;i<asks.length();i++){
             i_count++;
@@ -431,6 +435,11 @@ System.out.print(agg_map);
         Float bid_count = 0.0f;
 
         Integer b_count = 0;
+
+        JSONArray ask_data = asks.getJSONArray(0);
+        JSONArray bid_data = bids.getJSONArray(0);
+
+        coinbaseTrends.addBestOrder(Float.parseFloat(ask_data.get(0).toString()),Float.parseFloat(bid_data.get(0).toString()));
 
         for(int i=0;i<asks.length();i++){
             i_count++;

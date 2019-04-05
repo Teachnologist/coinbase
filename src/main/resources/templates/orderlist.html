@@ -9,9 +9,14 @@
 
 <main class="mdl-layout__content">
     <div class="mdl-tabs__tab-bar">
+        <a href="#trends-panel" class="mdl-tabs__tab is-active">Trends</a>
         <a href="#orders-panel" class="mdl-tabs__tab is-active">Orders</a>
         <a href="#trades-panel" class="mdl-tabs__tab">Trades</a>
     </div>
+    <div class="mdl-tabs__panel" id="trends-panel">
+        <div th:replace="fragments/public/trends :: showTrends (trends=${trends})"></div>
+    </div>
+
     <div class="mdl-tabs__panel is-active" id="orders-panel">
     <div th:replace="fragments/public/orders :: showOrders (aggregate_map=${data.agg_map},asks=${data.asks},bids=${data.bids})"></div>
     </div>
@@ -19,6 +24,8 @@
     <div class="mdl-tabs__panel" id="trades-panel">
         <div th:replace="fragments/public/trades :: showTrades (buys=${trades.buys},sells=${trades.sells},aggregate=${trades.aggregate})"></div>
     </div>
+
+
 
 </main>
 </body>

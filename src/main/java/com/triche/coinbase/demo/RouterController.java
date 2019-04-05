@@ -3,6 +3,7 @@ package com.triche.coinbase.demo;
 import com.triche.coinbase.coinbaseFreedata;
 import com.triche.coinbase.coinbaseProproducts;
 import com.triche.coinbase.coinbaseVariables;
+import com.triche.coinbase.tricheTrends;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -124,10 +125,12 @@ System.out.println("GOT IT!: "+pairs);
         coinbaseVariables.setPROURI(PROURL);
 
         coinbaseProproducts modela = new coinbaseProproducts();
+        tricheTrends trends = new tricheTrends();
         System.out.println("Level 2");
         System.out.print(modela.getOrderBook(2));
         model.addAttribute("data",modela.getOrderBook(2));
         model.addAttribute("trades",modela.getTradeBook());
+        model.addAttribute("trends",trends.allTrends());
 
         System.out.println("GOT IT!: "+pairs);
         return "orderlist";

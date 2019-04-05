@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/heading :: heading">
+<body>
+
+<div th:fragment="showTrends (trends)" >
+    <div  class="custom-jumbotron">
+
+
+        <h1 id="avg_ask" th:text="|ASK: ${trends.avg_ask}|"></h1>
+        <h4 id="ask_trend" th:text="|ASK: ${trends.ask_trend}|"></h4>
+        <br>
+        <h1 id="avg_bid" th:text="|BID: ${trends.avg_bid}|"></h1>
+        <h4 id="bid_trend" th:text="|ASK: ${trends.bid_trend}|"></h4>
+
+    </div>
+
+
+
+<script type="text/javascript">
+    if (!!window.EventSource) {
+        console.log("Event source available");
+
+        var source = new EventSource('/sse/trends');
+
+        source.addEventListener('message', function(e) {
+            console.log("order data");
+            console.dir(e.data);
+            editTableData(e.data);
+
+        });
+
+        source.addEventListener('open', function(e) {
+            console.log("Connection was opened.");
+        }, false);
+
+        source.addEventListener('error', function(e) {
+            if (e.readyState == EventSource.CLOSED) {
+                console.dir(e);
+                console.log("Connection was closed.");
+            } else {
+                console.log(e.readyState);
+            }
+        }, false);
+    } else {
+        console.log("No SSE available");
+    }
+
+    function displayTrend(data){
+
+        var avg_ask = document.getElementById("avg_ask");
+        var ask_trend = document.getElementById("ask_trend");
+        var avg_bid = document.getElementById("avg_bid");
+        var bid_trend = document.getElementById("bid_trend");
+
+        avg_ask.innerHTML = data.avg_ask;
+        ask_trend.innerHTML = data.ask_trend;
+        avg_bid.innerHTML = data.avg_bid;
+        bid_trend.innerHTML = data.bid_trend;
+
+    }
+
+
+    function editTableData(input){
+        var html = "";
+        var data = JSON.parse(input);
+        console.log("table data");
+        console.log("**TREND");
+        console.dir(data);
+        console.log("TREND##");
+        displayTrend(data);
+
+    }
+
+</script>
+</div>
+
+</body>
+</html>
