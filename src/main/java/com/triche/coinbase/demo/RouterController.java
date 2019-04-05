@@ -4,6 +4,8 @@ import com.triche.coinbase.coinbaseFreedata;
 import com.triche.coinbase.coinbaseProproducts;
 import com.triche.coinbase.coinbaseVariables;
 import com.triche.coinbase.tricheTrends;
+import com.triche.sync.orderBook;
+import com.triche.sync.staticData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,26 +49,32 @@ public class RouterController {
 
     String CODE = null;
 
+
+
     String url = "https://www.coinbase.com/oauth/authorize?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URL + "&response_type=code&scope=" + SCOPE;
 
     @RequestMapping(value = "/")
     public String index(Model model) {
         System.out.println("\n....................................This should show currencies....................................\n");
         coinbaseVariables.setCBUri(URL);
-        coinbaseVariables.setPROURI(PROURL);
+
+
+
+
+
 
 
         coinbaseProproducts cbpropublic = new coinbaseProproducts();
         cbpropublic.setProductList();
         cbpropublic.setActiveproducts();
 
+
+
         coinbaseFreedata mod = new coinbaseFreedata();
-
-
-
 
         model.addAttribute("client_date",new Date().toString());
         model.addAttribute("data",mod.getAllProductConversionsAsList());
+
 
 
     /*    model.addAttribute("usd","$");
@@ -76,6 +84,7 @@ public class RouterController {
         model.addAttribute("data",mod.getAllCurrencies());*/
 
         System.out.println("\n....................................Currencies loaded ....................................\n");
+
         return "currencies";
     }
 
@@ -124,11 +133,22 @@ System.out.println("GOT IT!: "+pairs);
         coinbaseVariables.setCBUri(URL);
         coinbaseVariables.setPROURI(PROURL);
 
+
+
+
+
+
         coinbaseProproducts modela = new coinbaseProproducts();
         tricheTrends trends = new tricheTrends();
         System.out.println("Level 2");
-        System.out.print(modela.getOrderBook(2));
-        model.addAttribute("data",modela.getOrderBook(2));
+
+
+
+
+        model.addAttribute("data",staticData.getOrders());
+
+
+
         model.addAttribute("trades",modela.getTradeBook());
         model.addAttribute("trends",trends.allTrends());
 
