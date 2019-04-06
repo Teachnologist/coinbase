@@ -6,7 +6,7 @@
 <div th:fragment="showOrders (aggregate_map,asks,bids)" >
     <div  class="custom-jumbotron" style="width:100%;     height: 40px; display:inline-flex; background-color:whitesmoke; position:relative;">
 
-        <div id="aggsize_grid" th:style="|width:${aggregate_map.bid_percentage_formatted}%; height:100%;background-color:${aggregate_map.bid_color};position:relative; text-align:center; color:white;|" th:text="|${aggregate_map.ask_percentage_formatted}%|"></div>
+        <div id="aggsize_grid" th:style="|width:${aggregate_map.bid_percentage_formatted}%; height:100%;background-color:${aggregate_map.bid_color};position:relative; text-align:center; color:white;|" th:text="|${aggregate_map.bid_percentage_formatted}%|"></div>
 
         <div class="title-text" style="height:100%;position:absolute;z-index:98;top:0; left:0;width:50%; border-right:solid; text-align:left;">SELL</div>
         <div class="title-text" style="height:100%;position:absolute;z-index:98;top:0; right:0;width:50%; border-left:solid; text-align:right;">BUY</div>
